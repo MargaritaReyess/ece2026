@@ -230,10 +230,136 @@
     </section>
 
     <section id="distancias" class="section">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 3</p>
-        <h2>De GD a IGD+</h2>
-        <p>Próximamente: distancias y referencia.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 3 · De GD a IGD+</p>
+        <h2>La dirección de la distancia cambia la pregunta</h2>
+        <p class="section-intro">
+          Las métricas basadas en distancia parecen sencillas, pero una decisión cambia por completo
+          lo que estamos evaluando: ¿medimos desde nuestras soluciones hacia el frente, o desde el frente
+          hacia nuestras soluciones?
+        </p>
+
+        <div class="distance-lab">
+          <div class="distance-controls">
+            <div>
+              <span class="control-label">Conjunto</span>
+              <div class="segmented" role="group" aria-label="Seleccionar conjunto">
+                <button class="distance-set active" data-set="A">A</button>
+                <button class="distance-set" data-set="B">B</button>
+              </div>
+            </div>
+
+            <div>
+              <span class="control-label">Indicador</span>
+              <div class="segmented metrics" role="group" aria-label="Seleccionar indicador">
+                <button class="distance-metric active" data-metric="GD">GD</button>
+                <button class="distance-metric" data-metric="IGD">IGD</button>
+                <button class="distance-metric" data-metric="IGD+">IGD+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="distance-layout">
+            <div>
+              <div id="distance-plot" class="distance-plot"
+                   role="img" aria-label="Visualización de distancias entre aproximación y conjunto de referencia"></div>
+              <div class="distance-legend">
+                <span><i class="legend-dot approximation"></i> aproximación</span>
+                <span><i class="legend-dot reference"></i> reference set</span>
+                <span><i class="legend-line"></i> distancia usada</span>
+              </div>
+            </div>
+
+            <aside class="metric-card">
+              <p class="metric-name" id="metric-name">Generational Distance (GD)</p>
+              <p class="metric-question" id="metric-question">
+                ¿Qué tan lejos están mis soluciones del frente?
+              </p>
+              <div class="metric-formula" id="metric-formula">
+                GD(A,R) = 1/|A| Σ min ||a − r||₂
+              </div>
+              <div class="metric-value-wrap">
+                <span>Valor del demo</span>
+                <strong id="metric-value">—</strong>
+                <small>menor es mejor</small>
+              </div>
+              <p class="metric-interpretation" id="metric-interpretation">
+                Las líneas parten de cada solución y buscan su punto de referencia más cercano.
+              </p>
+            </aside>
+          </div>
+        </div>
+
+        <div class="direction-comparison">
+          <article>
+            <span class="direction-arrow">A → R</span>
+            <h3>GD mira desde la aproximación</h3>
+            <p>
+              Puede premiar un conjunto muy cercano al frente aunque sólo cubra una pequeña región.
+            </p>
+          </article>
+          <article>
+            <span class="direction-arrow">R → A</span>
+            <h3>IGD invierte la dirección</h3>
+            <p>
+              Una región del frente sin soluciones cercanas produce distancias grandes.
+            </p>
+          </article>
+        </div>
+
+        <div class="igdplus-demo">
+          <div class="igdplus-copy">
+            <p class="section-kicker">¿Por qué IGD+?</p>
+            <h3>Una mejora Pareto no debería convertirse en penalización</h3>
+            <p>
+              En minimización, IGD+ modifica la distancia y sólo cuenta las componentes en las que
+              la solución de la aproximación es peor que el punto de referencia.
+            </p>
+            <div class="metric-formula compact">
+              d⁺(r,a) = √ Σ max(aⱼ − rⱼ, 0)²
+            </div>
+          </div>
+
+          <div class="plus-playground">
+            <div id="plus-plot" class="plus-plot"
+                 role="img" aria-label="Comparación entre distancia euclidiana e IGD plus"></div>
+            <div class="plus-controls">
+              <label>
+                Posición en f₁
+                <input id="plus-x" type="range" min="0.20" max="0.80" step="0.01" value="0.38">
+              </label>
+              <label>
+                Posición en f₂
+                <input id="plus-y" type="range" min="0.20" max="0.80" step="0.01" value="0.62">
+              </label>
+            </div>
+            <div class="plus-values">
+              <span>Euclidiana: <strong id="euclidean-value">—</strong></span>
+              <span>Distancia d⁺: <strong id="dplus-value">—</strong></span>
+            </div>
+            <p class="plus-hint">
+              Punto de referencia fijo: r = (0.50, 0.50). Mueve la solución a y observa qué componente deja de penalizar IGD+.
+            </p>
+          </div>
+        </div>
+
+        <div class="reference-warning">
+          <strong>Atención:</strong>
+          <span>
+            IGD e IGD+ necesitan un <em>reference set</em> que represente adecuadamente el frente.
+            Si cambia esa referencia, también puede cambiar la evaluación.
+          </span>
+        </div>
+
+        <div class="quality-summary">
+          <p class="transition-small">Idea clave</p>
+          <p class="transition-big">
+            GD pregunta “¿llegaron mis soluciones al frente?”; IGD pregunta “¿representé el frente?”.
+          </p>
+          <p>
+            IGD+ conserva la segunda idea, pero incorpora la relación de superioridad entre puntos para evitar penalizaciones no deseables.
+          </p>
+        </div>
       </div>
     </section>
 
