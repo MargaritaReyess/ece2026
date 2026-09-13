@@ -141,10 +141,91 @@
     </section>
 
     <section id="calidad" class="section muted">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 2</p>
-        <h2>¿Qué significa “mejor”?</h2>
-        <p>Próximamente: galería visual de convergencia, cobertura, uniformidad y cardinalidad.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 2 · ¿Qué significa “mejor”?</p>
+        <h2>Una buena aproximación no tiene una sola cualidad</h2>
+        <p class="section-intro">
+          Antes de elegir una métrica, necesitamos decidir qué queremos preservar en el conjunto
+          de soluciones. Observa cada caso e intenta identificar qué propiedad está fallando.
+        </p>
+
+        <div class="quality-grid">
+          <article class="quality-card" data-quality="convergencia">
+            <div class="quality-card-head">
+              <span class="quality-number">01</span>
+              <h3>¿Qué falla aquí?</h3>
+            </div>
+            <div id="quality-convergence" class="quality-plot" role="img"
+                 aria-label="Ejemplo de mala convergencia"></div>
+            <button class="reveal-quality" data-target="q-convergencia">Descubrir</button>
+            <div id="q-convergencia" class="quality-answer hidden">
+              <strong>Convergencia</strong>
+              <p>Las soluciones cubren una región amplia, pero permanecen alejadas del frente de Pareto.</p>
+            </div>
+          </article>
+
+          <article class="quality-card" data-quality="cobertura">
+            <div class="quality-card-head">
+              <span class="quality-number">02</span>
+              <h3>¿Qué falla aquí?</h3>
+            </div>
+            <div id="quality-coverage" class="quality-plot" role="img"
+                 aria-label="Ejemplo de mala cobertura"></div>
+            <button class="reveal-quality" data-target="q-cobertura">Descubrir</button>
+            <div id="q-cobertura" class="quality-answer hidden">
+              <strong>Cobertura <span class="term-note">(spread)</span></strong>
+              <p>Los puntos convergen bien, pero sólo representan una parte del frente.</p>
+            </div>
+          </article>
+
+          <article class="quality-card" data-quality="uniformidad">
+            <div class="quality-card-head">
+              <span class="quality-number">03</span>
+              <h3>¿Qué falla aquí?</h3>
+            </div>
+            <div id="quality-uniformity" class="quality-plot" role="img"
+                 aria-label="Ejemplo de mala uniformidad"></div>
+            <button class="reveal-quality" data-target="q-uniformidad">Descubrir</button>
+            <div id="q-uniformidad" class="quality-answer hidden">
+              <strong>Uniformidad</strong>
+              <p>El frente está cubierto, pero las soluciones se agrupan y dejan zonas poco representadas.</p>
+            </div>
+          </article>
+
+          <article class="quality-card" data-quality="cardinalidad">
+            <div class="quality-card-head">
+              <span class="quality-number">04</span>
+              <h3>¿Qué cambia aquí?</h3>
+            </div>
+            <div id="quality-cardinality" class="quality-plot" role="img"
+                 aria-label="Ejemplo de distinta cardinalidad"></div>
+            <button class="reveal-quality" data-target="q-cardinalidad">Descubrir</button>
+            <div id="q-cardinalidad" class="quality-answer hidden">
+              <strong>Cardinalidad</strong>
+              <p>El número de soluciones también modifica qué tan detalladamente representamos el frente.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="diversity-note">
+          <div>
+            <p class="diversity-label">Una distinción útil</p>
+            <p class="diversity-equation">Diversidad = cobertura + uniformidad</p>
+          </div>
+          <p>
+            Dos conjuntos pueden tener una cobertura parecida y, aun así, distribuir sus soluciones de manera muy diferente.
+          </p>
+        </div>
+
+        <div class="quality-summary">
+          <p class="transition-small">Idea clave</p>
+          <p class="transition-big">
+            Antes de preguntar “¿qué métrica uso?”, pregunta “¿qué aspecto de calidad necesito medir?”
+          </p>
+          <p>
+            En los siguientes bloques veremos que distintos indicadores responden de forma diferente a estas propiedades.
+          </p>
+        </div>
       </div>
     </section>
 
