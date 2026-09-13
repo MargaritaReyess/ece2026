@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
+  <title>ECE 2026 · Métricas multiobjetivo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#inicio">ECE 2026 · Métricas multiobjetivo</a>
+      <nav class="nav" aria-label="Navegación principal">
+        <a href="#reto">El reto</a>
+        <a href="#calidad">¿Qué es calidad?</a>
+        <a href="#distancias">Distancias</a>
+        <a href="#hypervolume">Hypervolume</a>
+        <a href="#comparador">Comparador</a>
+        <a href="#trampas">Trampas</a>
+        <a href="#laboratorio">Laboratorio</a>
+        <a href="#guia">Guía</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">7ª Escuela de Cómputo Evolutivo · ECE 2026</p>
+          <h1>Métricas para evaluar el desempeño de un algoritmo multiobjetivo</h1>
+          <p class="lead">
+            Un taller visual e interactivo para aprender a comparar conjuntos de soluciones,
+            entender qué mide cada indicador y reconocer cuándo una métrica puede engañarnos.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#reto">Comenzar el taller</a>
+            <span class="pill">75 min · visual · práctico</span>
+          </div>
+        </div>
+        <div class="hero-card" aria-hidden="true">
+          <svg viewBox="0 0 520 320" class="hero-svg">
+            <path id="hero-front" class="front-line"></path>
+            <g id="hero-points"></g>
+            <text x="470" y="300" class="axis-label">f₁</text>
+            <text x="20" y="30" class="axis-label">f₂</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="reto" class="section">
+      <div class="container">
+        <p class="section-kicker">Bloque 1 · El reto</p>
+        <h2>¿Cuál algoritmo produjo el mejor resultado?</h2>
+        <p class="section-intro">
+          Observa los dos conjuntos. Ambos provienen del mismo problema biobjetivo de minimización.
+          La línea punteada representa el frente de Pareto verdadero. No hay métricas todavía:
+          decide sólo a partir de lo que ves.
+        </p>
+
+        <div class="plot-grid two">
+          <article class="plot-card">
+            <div class="plot-title-row">
+              <h3>Algoritmo A</h3>
+              <span class="tag">9 soluciones</span>
+            </div>
+            <div id="plot-a" class="plot" role="img" aria-label="Conjunto A"></div>
+          </article>
+
+          <article class="plot-card">
+            <div class="plot-title-row">
+              <h3>Algoritmo B</h3>
+              <span class="tag">9 soluciones</span>
+            </div>
+            <div id="plot-b" class="plot" role="img" aria-label="Conjunto B"></div>
+          </article>
+        </div>
+
+        <div class="vote-panel">
+          <p class="vote-question">Sin calcular nada: ¿cuál escogerías?</p>
+          <div class="vote-buttons">
+            <button class="choice" data-choice="A">A</button>
+            <button class="choice" data-choice="B">B</button>
+            <button class="choice" data-choice="Depende">Depende</button>
+          </div>
+          <p id="vote-feedback" class="feedback" aria-live="polite">
+            Guarda mentalmente tu respuesta. Volveremos a ella al final.
+          </p>
+        </div>
+
+        <div class="reveal">
+          <button id="reveal-c" class="button secondary">Añadir un tercer resultado</button>
+          <article id="card-c" class="plot-card hidden">
+            <div class="plot-title-row">
+              <h3>Algoritmo C</h3>
+              <span class="tag">9 soluciones</span>
+            </div>
+            <div id="plot-c" class="plot" role="img" aria-label="Conjunto C"></div>
+            <p class="caption">
+              C cubre casi toda la región, pero está más alejado del frente.
+              ¿La cobertura basta para considerarlo mejor?
+            </p>
+          </article>
+        </div>
+
+        <div class="concept-strip">
+          <div><strong>Convergencia</strong><span>¿Qué tan cerca estamos del frente?</span></div>
+          <div><strong>Cobertura</strong><span>¿Qué parte del frente representamos?</span></div>
+          <div><strong>Uniformidad</strong><span>¿Cómo se distribuyen las soluciones?</span></div>
+          <div><strong>Cardinalidad</strong><span>¿Cuántas soluciones ofrecemos?</span></div>
+        </div>
+
+        <div class="transition-box">
+          <p class="transition-small">La pregunta cambia:</p>
+          <p class="transition-big">¿Cómo convertimos estas gráficas en una comparación cuantitativa?</p>
+          <p class="equation">I(A) ∈ ℝ</p>
+          <p>
+            Un indicador resume algún aspecto de la calidad de un conjunto, pero el número por sí solo
+            no nos dice <em>qué noción de calidad</em> estamos privilegiando.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="calidad" class="section muted">
+      <div class="container placeholder">
+        <p class="section-kicker">Bloque 2</p>
+        <h2>¿Qué significa “mejor”?</h2>
+        <p>Próximamente: galería visual de convergencia, cobertura, uniformidad y cardinalidad.</p>
+      </div>
+    </section>
+
+    <section id="distancias" class="section"><div class="container placeholder"><p class="section-kicker">Bloque 3</p><h2>De GD a IGD+</h2><p>Próximamente: distancias y referencia.</p></div></section>
+    <section id="hypervolume" class="section muted"><div class="container placeholder"><p class="section-kicker">Bloque 4</p><h2>Hypervolume</h2><p>Próximamente: región dominada y punto de referencia interactivo.</p></div></section>
+    <section id="comparador" class="section"><div class="container placeholder"><p class="section-kicker">Bloque 5</p><h2>Comparador de métricas</h2><p>Próximamente: A vs. B según diferentes indicadores.</p></div></section>
+    <section id="trampas" class="section muted"><div class="container placeholder"><p class="section-kicker">Bloque 6</p><h2>Las trampas</h2><p>Próximamente: normalización, cardinalidad, reference sets y dimensión.</p></div></section>
+    <section id="laboratorio" class="section"><div class="container placeholder"><p class="section-kicker">Bloque 7</p><h2>Mini laboratorio</h2><p>Próximamente: notebook de Google Colab con pymoo.</p></div></section>
+    <section id="guia" class="section muted"><div class="container placeholder"><p class="section-kicker">Bloque 8</p><h2>Guía práctica</h2><p>Próximamente: cómo elegir y reportar indicadores.</p></div></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>ECE 2026 · Material didáctico en construcción</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
