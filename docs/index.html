@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <header class="site-header">
@@ -276,7 +276,7 @@
                 ¿Qué tan lejos están mis soluciones del frente?
               </p>
               <div class="metric-formula" id="metric-formula">
-                GD(A,R) = 1/|A| Σ min ||a − r||^2
+                GD(A,R) = 1/|A| Σ min ||a − r||₂
               </div>
               <div class="metric-value-wrap">
                 <span>Valor del demo</span>
@@ -310,7 +310,7 @@
         <div class="igdplus-demo">
           <div class="igdplus-copy">
             <p class="section-kicker">¿Por qué IGD+?</p>
-            <h3>Una "mejora" en el sentido de Pareto no debería convertirse en penalización</h3>
+            <h3>Una mejora Pareto no debería convertirse en penalización</h3>
             <p>
               En minimización, IGD+ modifica la distancia y sólo cuenta las componentes en las que
               la solución de la aproximación es peor que el punto de referencia.
@@ -364,10 +364,132 @@
     </section>
 
     <section id="hypervolume" class="section muted">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 4</p>
-        <h2>Hypervolume</h2>
-        <p>Próximamente: región dominada y punto de referencia interactivo.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 4 · Hypervolume</p>
+        <h2>¿Cuánto espacio domina el conjunto?</h2>
+        <p class="section-intro">
+          Hypervolume (HV) mide el área —o volumen en más dimensiones— dominada por el conjunto
+          y limitada por un punto de referencia <em>r</em>. En este demo todos los objetivos se minimizan.
+        </p>
+
+        <div class="hv-lab">
+          <div class="hv-toolbar">
+            <div>
+              <span class="control-label">Conjunto</span>
+              <div class="segmented" role="group" aria-label="Seleccionar conjunto para hypervolume">
+                <button class="hv-set active" data-set="A">A</button>
+                <button class="hv-set" data-set="B">B</button>
+              </div>
+            </div>
+
+            <button id="hv-dominated-toggle" class="button secondary hv-small-button">
+              Añadir punto dominado
+            </button>
+          </div>
+
+          <div class="hv-layout">
+            <div>
+              <div id="hv-plot" class="hv-plot"
+                   role="img" aria-label="Región dominada utilizada para calcular hypervolume"></div>
+
+              <div class="hv-ref-controls">
+                <label>
+                  r₁
+                  <input id="hv-rx" type="range" min="1.02" max="1.40" step="0.01" value="1.10">
+                  <span id="hv-rx-value">1.10</span>
+                </label>
+                <label>
+                  r₂
+                  <input id="hv-ry" type="range" min="1.02" max="1.40" step="0.01" value="1.10">
+                  <span id="hv-ry-value">1.10</span>
+                </label>
+              </div>
+            </div>
+
+            <aside class="hv-side">
+              <div class="hv-value-card">
+                <span>Hypervolume</span>
+                <strong id="hv-value">—</strong>
+                <small>mayor es mejor</small>
+              </div>
+
+              <div class="metric-formula hv-formula">
+                HV(A;r) = λ( ⋃ [a₁,r₁] × [a₂,r₂] )
+              </div>
+
+              <p class="hv-explanation">
+                La región sombreada es la unión de las áreas dominadas por las soluciones
+                hasta el punto de referencia.
+              </p>
+
+              <div class="hv-contribution-card">
+                <span class="control-label">Contribución individual</span>
+                <p id="hv-point-message">
+                  Haz clic en una solución para ver cuánto HV se perdería al eliminarla.
+                </p>
+                <strong id="hv-contribution">ΔHV = —</strong>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="hv-insights">
+          <article>
+            <span class="insight-symbol">✓</span>
+            <div>
+              <h3>No necesita conocer el PF verdadero</h3>
+              <p>HV no requiere un <em>reference set</em> que aproxime el frente.</p>
+            </div>
+          </article>
+
+          <article>
+            <span class="insight-symbol">↗</span>
+            <div>
+              <h3>Premia convergencia y cobertura</h3>
+              <p>Mejorar o extender una región no dominada puede aumentar el área cubierta.</p>
+            </div>
+          </article>
+
+          <article>
+            <span class="insight-symbol">!</span>
+            <div>
+              <h3>El punto de referencia importa</h3>
+              <p>Mueve <em>r</em> y observa cómo cambia el valor, aunque las soluciones sean las mismas.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="hv-challenge">
+          <div>
+            <p class="section-kicker">Mini reto</p>
+            <h3>¿Todas las soluciones aportan lo mismo?</h3>
+            <p>
+              Selecciona distintos puntos del conjunto. La contribución de una solución es el HV
+              que se pierde al eliminarla.
+            </p>
+          </div>
+          <div class="metric-formula compact">
+            ΔHV(aᵢ) = HV(A) − HV(A \ {aᵢ})
+          </div>
+        </div>
+
+        <div class="reference-warning">
+          <strong>Observa:</strong>
+          <span>
+            Si añades el punto dominado del demo, el HV no cambia. El punto no agrega nueva región dominada.
+          </span>
+        </div>
+
+        <div class="quality-summary">
+          <p class="transition-small">Idea clave</p>
+          <p class="transition-big">
+            HV resume en un solo valor cuánto espacio objetivo está cubierto por el conjunto.
+          </p>
+          <p>
+            Es una propiedad poderosa, pero su interpretación depende también del punto de referencia
+            y su costo computacional crece al aumentar el número de objetivos.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -410,6 +532,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

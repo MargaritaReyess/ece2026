@@ -561,3 +561,168 @@ function renderPlusPlayground(){
   if(el) el.addEventListener("input",renderPlusPlayground);
 });
 renderPlusPlayground();
+
+
+// ---------- Bloque 4: Hypervolume ----------
+const HV_STATE = {set:"A",rx:1.10,ry:1.10,addDominated:false,selectedIndex:null};
+
+function getHVPoints(){
+  const pts=SETS[HV_STATE.set].map(p=>[p[0],p[1]]);
+  if(HV_STATE.addDominated) pts.push([0.80,0.80]);
+  return pts;
+}
+
+function nondominated2D(points){
+  return points.filter((p,i)=>!points.some((q,j)=>{
+    if(i===j) return false;
+    return q[0]<=p[0] && q[1]<=p[1] && (q[0]<p[0] || q[1]<p[1]);
+  }));
+}
+
+function hv2D(points,ref){
+  const valid=nondominated2D(points)
+    .filter(p=>p[0]<ref[0] && p[1]<ref[1])
+    .sort((a,b)=>a[0]-b[0]);
+
+  let hv=0, prevY=ref[1];
+  valid.forEach(([x,y])=>{
+    if(y<prevY){
+      hv+=(ref[0]-x)*(prevY-y);
+      prevY=y;
+    }
+  });
+  return hv;
+}
+
+function hvContribution(points,index,ref){
+  return Math.max(0,hv2D(points,ref)-hv2D(points.filter((_,i)=>i!==index),ref));
+}
+
+function hvPolygon(points,ref){
+  const nd=nondominated2D(points)
+    .filter(p=>p[0]<ref[0] && p[1]<ref[1])
+    .sort((a,b)=>a[0]-b[0]);
+  if(!nd.length) return [];
+
+  const poly=[[nd[0][0],ref[1]],[nd[0][0],nd[0][1]]];
+  for(let i=1;i<nd.length;i++){
+    poly.push([nd[i][0],nd[i-1][1]],[nd[i][0],nd[i][1]]);
+  }
+  poly.push([ref[0],nd[nd.length-1][1]],[ref[0],ref[1]]);
+  return poly;
+}
+
+function makeHVSVG(){
+  const width=700,height=470,pad=52,maxAxis=1.45;
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+  const sx=x=>pad+(x/maxAxis)*(width-2*pad);
+  const sy=y=>height-pad-(y/maxAxis)*(height-2*pad);
+
+  [0,.25,.5,.75,1,1.25].forEach(t=>{
+    const v=document.createElementNS(NS,"line");
+    v.setAttribute("x1",sx(t));v.setAttribute("x2",sx(t));
+    v.setAttribute("y1",sy(0));v.setAttribute("y2",sy(maxAxis));
+    v.setAttribute("class","grid");svg.appendChild(v);
+    const h=document.createElementNS(NS,"line");
+    h.setAttribute("x1",sx(0));h.setAttribute("x2",sx(maxAxis));
+    h.setAttribute("y1",sy(t));h.setAttribute("y2",sy(t));
+    h.setAttribute("class","grid");svg.appendChild(h);
+  });
+
+  const ax=document.createElementNS(NS,"line");
+  ax.setAttribute("x1",sx(0));ax.setAttribute("x2",sx(maxAxis));
+  ax.setAttribute("y1",sy(0));ax.setAttribute("y2",sy(0));ax.setAttribute("class","axis");svg.appendChild(ax);
+  const ay=document.createElementNS(NS,"line");
+  ay.setAttribute("x1",sx(0));ay.setAttribute("x2",sx(0));
+  ay.setAttribute("y1",sy(0));ay.setAttribute("y2",sy(maxAxis));ay.setAttribute("class","axis");svg.appendChild(ay);
+
+  let fd="";
+  for(let i=0;i<=140;i++){
+    const x=i/140,y=paretoY(x);
+    fd+=(i===0?"M":"L")+sx(x)+" "+sy(y)+" ";
+  }
+  const front=document.createElementNS(NS,"path");
+  front.setAttribute("d",fd);front.setAttribute("class","front");svg.appendChild(front);
+
+  const points=getHVPoints(),ref=[HV_STATE.rx,HV_STATE.ry];
+  const poly=hvPolygon(points,ref);
+  if(poly.length){
+    const pg=document.createElementNS(NS,"polygon");
+    pg.setAttribute("points",poly.map(p=>`${sx(p[0])},${sy(p[1])}`).join(" "));
+    pg.setAttribute("class","hv-region");svg.appendChild(pg);
+  }
+
+  const gx=document.createElementNS(NS,"line");
+  gx.setAttribute("x1",sx(ref[0]));gx.setAttribute("x2",sx(ref[0]));
+  gx.setAttribute("y1",sy(0));gx.setAttribute("y2",sy(ref[1]));
+  gx.setAttribute("class","hv-ref-guides");svg.appendChild(gx);
+  const gy=document.createElementNS(NS,"line");
+  gy.setAttribute("x1",sx(0));gy.setAttribute("x2",sx(ref[0]));
+  gy.setAttribute("y1",sy(ref[1]));gy.setAttribute("y2",sy(ref[1]));
+  gy.setAttribute("class","hv-ref-guides");svg.appendChild(gy);
+
+  points.forEach((p,i)=>{
+    const isDom=HV_STATE.addDominated && i===points.length-1;
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));c.setAttribute("r",isDom?7:8);
+    c.setAttribute("class",`hv-point${isDom?" dominated":""}${HV_STATE.selectedIndex===i?" selected":""}`);
+    c.addEventListener("click",()=>{HV_STATE.selectedIndex=i;renderHVLab();});
+    svg.appendChild(c);
+  });
+
+  const rc=document.createElementNS(NS,"circle");
+  rc.setAttribute("cx",sx(ref[0]));rc.setAttribute("cy",sy(ref[1]));rc.setAttribute("r",8);rc.setAttribute("class","hv-ref");svg.appendChild(rc);
+  const rt=document.createElementNS(NS,"text");
+  rt.setAttribute("x",sx(ref[0])+10);rt.setAttribute("y",sy(ref[1])-10);rt.textContent="r";svg.appendChild(rt);
+
+  const tx=document.createElementNS(NS,"text");
+  tx.setAttribute("x",width-28);tx.setAttribute("y",height-14);tx.textContent="f₁";svg.appendChild(tx);
+  const ty=document.createElementNS(NS,"text");
+  ty.setAttribute("x",14);ty.setAttribute("y",27);ty.textContent="f₂";svg.appendChild(ty);
+  return svg;
+}
+
+function renderHVLab(){
+  const mount=document.querySelector("#hv-plot");
+  if(!mount) return;
+  mount.innerHTML="";mount.appendChild(makeHVSVG());
+
+  const points=getHVPoints(),ref=[HV_STATE.rx,HV_STATE.ry];
+  document.querySelector("#hv-value").textContent=hv2D(points,ref).toFixed(4);
+  document.querySelector("#hv-rx-value").textContent=HV_STATE.rx.toFixed(2);
+  document.querySelector("#hv-ry-value").textContent=HV_STATE.ry.toFixed(2);
+
+  document.querySelectorAll(".hv-set").forEach(b=>b.classList.toggle("active",b.dataset.set===HV_STATE.set));
+  document.querySelector("#hv-dominated-toggle").textContent=
+    HV_STATE.addDominated?"Quitar punto dominado":"Añadir punto dominado";
+
+  const msg=document.querySelector("#hv-point-message"),val=document.querySelector("#hv-contribution");
+  if(HV_STATE.selectedIndex===null || HV_STATE.selectedIndex>=points.length){
+    msg.textContent="Haz clic en una solución para ver cuánto HV se perdería al eliminarla.";
+    val.textContent="ΔHV = —";
+  }else{
+    const p=points[HV_STATE.selectedIndex];
+    const d=hvContribution(points,HV_STATE.selectedIndex,ref);
+    const isDom=HV_STATE.addDominated && HV_STATE.selectedIndex===points.length-1;
+    msg.textContent=isDom
+      ?`Punto dominado a = (${p[0].toFixed(2)}, ${p[1].toFixed(2)}): no agrega región nueva.`
+      :`Solución a = (${p[0].toFixed(3)}, ${p[1].toFixed(3)}).`;
+    val.textContent=`ΔHV = ${d.toFixed(4)}`;
+  }
+}
+
+document.querySelectorAll(".hv-set").forEach(btn=>btn.addEventListener("click",()=>{
+  HV_STATE.set=btn.dataset.set;HV_STATE.selectedIndex=null;renderHVLab();
+}));
+
+const hvRx=document.querySelector("#hv-rx"),hvRy=document.querySelector("#hv-ry");
+if(hvRx) hvRx.addEventListener("input",()=>{HV_STATE.rx=parseFloat(hvRx.value);renderHVLab();});
+if(hvRy) hvRy.addEventListener("input",()=>{HV_STATE.ry=parseFloat(hvRy.value);renderHVLab();});
+
+const hvDom=document.querySelector("#hv-dominated-toggle");
+if(hvDom) hvDom.addEventListener("click",()=>{
+  HV_STATE.addDominated=!HV_STATE.addDominated;HV_STATE.selectedIndex=null;renderHVLab();
+});
+
+renderHVLab();
