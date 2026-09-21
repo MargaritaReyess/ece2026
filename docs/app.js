@@ -783,14 +783,14 @@ function renderHV3DFigure(){
   if(!mount) return;
 
   const NS3="http://www.w3.org/2000/svg";
-  const W=650,H=430;
+  const W=650,H=500;
   const svg=document.createElementNS(NS3,"svg");
   svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
 
   // Isometric projection for a schematic 3D view.
   const project=([x,y,z])=>{
-    const ox=325, oy=355;
-    const sx=185, sy=78, sz=225;
+    const ox=315, oy=395;
+    const sx=165, sy=68, sz=190;
     return [
       ox + (x-y)*sx,
       oy - (x+y)*sy - z*sz
