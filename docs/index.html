@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <header class="site-header">
@@ -310,7 +310,7 @@
         <div class="igdplus-demo">
           <div class="igdplus-copy">
             <p class="section-kicker">¿Por qué IGD+?</p>
-            <h3>Una mejora Pareto no debería convertirse en penalización</h3>
+            <h3>Una mejora en el sentido de Pareto no debería penalizarse</h3>
             <p>
               En minimización, IGD+ modifica la distancia y sólo cuenta las componentes en las que
               la solución de la aproximación es peor que el punto de referencia.
@@ -480,6 +480,59 @@
           </span>
         </div>
 
+        <div class="hv-3d-section">
+          <div class="hv-3d-copy">
+            <p class="section-kicker">¿Y si tenemos tres objetivos?</p>
+            <h3>Del área al volumen</h3>
+            <p>
+              La idea no cambia: cada solución define ahora un <strong>prisma rectangular</strong>
+              hasta el punto de referencia <em>r</em>. El HV corresponde al volumen de la
+              <strong>unión</strong> de esos prismas, no a la suma directa de sus volúmenes,
+              porque pueden traslaparse.
+            </p>
+
+            <div class="complexity-card">
+              <p class="complexity-title">Costo computacional del HV exacto</p>
+              <div class="complexity-grid">
+                <div>
+                  <span>2 objetivos</span>
+                  <strong>O(n log n)</strong>
+                  <small>O(n) una vez ordenados los puntos</small>
+                </div>
+                <div>
+                  <span>3 objetivos</span>
+                  <strong>O(n log n)</strong>
+                  <small>existen algoritmos exactos óptimos</small>
+                </div>
+                <div>
+                  <span>4 objetivos</span>
+                  <strong>O(n²)</strong>
+                  <small>algoritmos exactos especializados</small>
+                </div>
+              </div>
+              <p class="complexity-note">
+                El salto no aparece necesariamente al pasar de 2D a 3D: ambos admiten
+                algoritmos exactos de orden O(n log n). A partir de dimensiones mayores,
+                el costo crece con rapidez; para dimensión general existen cotas del tipo
+                O(n<sup>d/3</sup> polylog n).
+              </p>
+              <p class="complexity-source">
+                Complejidades asintóticas: Beume et al. (2009) y Guerreiro, Fonseca &amp; Paquete (2020).
+              </p>
+            </div>
+          </div>
+
+          <div class="hv-3d-figure-wrap">
+            <div id="hv3d-figure" class="hv3d-figure"
+                 role="img"
+                 aria-label="Esquema tridimensional del hypervolume como unión de prismas rectangulares"></div>
+            <p class="hv3d-caption">
+              Esquema conceptual: tres soluciones no dominadas y los prismas rectangulares
+              que generan respecto al mismo punto de referencia.
+            </p>
+          </div>
+        </div>
+
         <div class="quality-summary">
           <p class="transition-small">Idea clave</p>
           <p class="transition-big">
@@ -532,6 +585,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

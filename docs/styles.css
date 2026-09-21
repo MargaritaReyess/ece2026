@@ -770,6 +770,16 @@ h3{margin:0;font-size:1.25rem}
 .hv-plot .axis{stroke:#94a3b8;stroke-width:1.25}
 .hv-plot .front{fill:none;stroke:#9aa5b5;stroke-width:2;stroke-dasharray:7 6}
 .hv-plot .hv-region{fill:rgba(36,87,214,.16);stroke:rgba(36,87,214,.38);stroke-width:1.5}
+.hv-plot .hv-exclusive{
+  fill:rgba(234,132,36,.34);
+  stroke:#d97706;
+  stroke-width:2.2;
+}
+.hv-plot .hv-exclusive-label{
+  fill:#9a4f05;
+  font-size:11px;
+  font-weight:800;
+}
 .hv-plot .hv-point{fill:var(--accent);stroke:#fff;stroke-width:2.2;cursor:pointer}
 .hv-plot .hv-point:hover{stroke:#111827;stroke-width:3}
 .hv-plot .hv-point.selected{stroke:#111827;stroke-width:4}
@@ -798,6 +808,138 @@ h3{margin:0;font-size:1.25rem}
 .hv-challenge{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;margin-top:28px;padding:24px 26px;background:#fff;border:1px solid var(--line);border-radius:var(--radius)}
 .hv-challenge h3{margin:.1em 0 .35em;font-size:1.35rem}
 .hv-challenge p:not(.section-kicker){margin:0;color:var(--muted)}
+
+.hv-3d-section{
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:28px;
+  align-items:center;
+  margin-top:34px;
+  padding:28px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.hv-3d-copy h3{
+  margin:.1em 0 .55em;
+  font-size:1.55rem;
+}
+.hv-3d-copy > p:not(.section-kicker){
+  color:var(--muted);
+}
+.hv-3d-figure-wrap{
+  padding:18px;
+  background:var(--surface-2);
+  border-radius:16px;
+}
+.hv3d-figure{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:13px;
+  overflow:hidden;
+}
+.hv3d-figure svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.hv3d-figure .axis3d{
+  stroke:#64748b;
+  stroke-width:1.7;
+}
+.hv3d-figure .axis3d-guide{
+  stroke:#cbd5e1;
+  stroke-width:1;
+  stroke-dasharray:5 5;
+}
+.hv3d-figure .prism-face-a{
+  fill:rgba(36,87,214,.17);
+  stroke:rgba(36,87,214,.62);
+  stroke-width:1.2;
+}
+.hv3d-figure .prism-face-b{
+  fill:rgba(123,63,228,.13);
+  stroke:rgba(93,67,160,.55);
+  stroke-width:1.1;
+}
+.hv3d-figure .solution3d{
+  fill:#2457d6;
+  stroke:#fff;
+  stroke-width:2.2;
+}
+.hv3d-figure .ref3d{
+  fill:#fff;
+  stroke:#d05a47;
+  stroke-width:2.8;
+}
+.hv3d-figure text{
+  fill:#64748b;
+  font-size:12px;
+}
+.hv3d-caption{
+  margin:10px 2px 0;
+  color:var(--muted);
+  font-size:.88rem;
+}
+.complexity-card{
+  margin-top:20px;
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--surface-2);
+}
+.complexity-title{
+  margin:0 0 12px !important;
+  color:var(--text) !important;
+  font-weight:850;
+}
+.complexity-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.complexity-grid div{
+  padding:12px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+.complexity-grid span,
+.complexity-grid small{
+  display:block;
+  color:var(--muted);
+}
+.complexity-grid span{
+  font-size:.82rem;
+  font-weight:750;
+}
+.complexity-grid strong{
+  display:block;
+  margin:3px 0;
+  font-size:1.12rem;
+}
+.complexity-grid small{
+  font-size:.76rem;
+  line-height:1.35;
+}
+.complexity-note{
+  margin:14px 0 0 !important;
+  color:var(--muted) !important;
+  font-size:.91rem;
+}
+.complexity-source{
+  margin:8px 0 0 !important;
+  color:#7c8799 !important;
+  font-size:.78rem;
+}
+@media (max-width:900px){
+  .hv-3d-section{grid-template-columns:1fr}
+}
+@media (max-width:650px){
+  .complexity-grid{grid-template-columns:1fr}
+}
+
 @media (max-width:900px){
   .hv-layout{grid-template-columns:1fr}
   .hv-insights{grid-template-columns:1fr}

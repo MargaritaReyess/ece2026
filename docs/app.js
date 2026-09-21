@@ -612,6 +612,33 @@ function hvPolygon(points,ref){
   return poly;
 }
 
+
+function hvExclusiveRect(points,index,ref){
+  if(index===null || index<0 || index>=points.length) return null;
+
+  const p=points[index];
+
+  // If another point dominates p, its exclusive contribution is zero.
+  const dominated=points.some((q,j)=>{
+    if(j===index) return false;
+    return q[0]<=p[0] && q[1]<=p[1] && (q[0]<p[0] || q[1]<p[1]);
+  });
+  if(dominated || p[0]>=ref[0] || p[1]>=ref[1]) return null;
+
+  const nd=nondominated2D(points)
+    .filter(q=>q[0]<ref[0] && q[1]<ref[1])
+    .sort((a,b)=>a[0]-b[0]);
+
+  const pos=nd.findIndex(q=>Math.abs(q[0]-p[0])<1e-12 && Math.abs(q[1]-p[1])<1e-12);
+  if(pos<0) return null;
+
+  const prevY=pos===0 ? ref[1] : nd[pos-1][1];
+  const nextX=pos===nd.length-1 ? ref[0] : nd[pos+1][0];
+
+  if(nextX<=p[0] || prevY<=p[1]) return null;
+  return {x0:p[0],x1:nextX,y0:p[1],y1:prevY};
+}
+
 function makeHVSVG(){
   const width=700,height=470,pad=52,maxAxis=1.45;
   const svg=document.createElementNS(NS,"svg");
@@ -651,6 +678,28 @@ function makeHVSVG(){
     const pg=document.createElementNS(NS,"polygon");
     pg.setAttribute("points",poly.map(p=>`${sx(p[0])},${sy(p[1])}`).join(" "));
     pg.setAttribute("class","hv-region");svg.appendChild(pg);
+  }
+
+  // Highlight the exclusive hypervolume contribution of the selected solution.
+  if(HV_STATE.selectedIndex!==null){
+    const er=hvExclusiveRect(points,HV_STATE.selectedIndex,ref);
+    if(er){
+      const rect=document.createElementNS(NS,"rect");
+      rect.setAttribute("x",sx(er.x0));
+      rect.setAttribute("y",sy(er.y1));
+      rect.setAttribute("width",sx(er.x1)-sx(er.x0));
+      rect.setAttribute("height",sy(er.y0)-sy(er.y1));
+      rect.setAttribute("class","hv-exclusive");
+      svg.appendChild(rect);
+
+      const lab=document.createElementNS(NS,"text");
+      lab.setAttribute("x",(sx(er.x0)+sx(er.x1))/2);
+      lab.setAttribute("y",(sy(er.y0)+sy(er.y1))/2);
+      lab.setAttribute("text-anchor","middle");
+      lab.setAttribute("class","hv-exclusive-label");
+      lab.textContent="ΔHV";
+      svg.appendChild(lab);
+    }
   }
 
   const gx=document.createElementNS(NS,"line");
@@ -726,3 +775,109 @@ if(hvDom) hvDom.addEventListener("click",()=>{
 });
 
 renderHVLab();
+
+
+// ---------- Figura fija: Hypervolume en 3D ----------
+function renderHV3DFigure(){
+  const mount=document.querySelector("#hv3d-figure");
+  if(!mount) return;
+
+  const NS3="http://www.w3.org/2000/svg";
+  const W=650,H=430;
+  const svg=document.createElementNS(NS3,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+
+  // Isometric projection for a schematic 3D view.
+  const project=([x,y,z])=>{
+    const ox=325, oy=355;
+    const sx=185, sy=78, sz=225;
+    return [
+      ox + (x-y)*sx,
+      oy - (x+y)*sy - z*sz
+    ];
+  };
+
+  const line=(a,b,cls)=>{
+    const A=project(a),B=project(b);
+    const l=document.createElementNS(NS3,"line");
+    l.setAttribute("x1",A[0]);l.setAttribute("y1",A[1]);
+    l.setAttribute("x2",B[0]);l.setAttribute("y2",B[1]);
+    l.setAttribute("class",cls);
+    svg.appendChild(l);
+  };
+
+  // Axes and faint bounding guides.
+  line([0,0,0],[1.12,0,0],"axis3d");
+  line([0,0,0],[0,1.12,0],"axis3d");
+  line([0,0,0],[0,0,1.12],"axis3d");
+  line([1.05,1.05,0],[1.05,1.05,1.05],"axis3d-guide");
+  line([1.05,0,1.05],[1.05,1.05,1.05],"axis3d-guide");
+  line([0,1.05,1.05],[1.05,1.05,1.05],"axis3d-guide");
+
+  const addText=(p,text,dx=0,dy=0)=>{
+    const P=project(p);
+    const t=document.createElementNS(NS3,"text");
+    t.setAttribute("x",P[0]+dx);t.setAttribute("y",P[1]+dy);
+    t.textContent=text;svg.appendChild(t);
+  };
+
+  addText([1.12,0,0],"f₁",9,8);
+  addText([0,1.12,0],"f₂",-24,9);
+  addText([0,0,1.12],"f₃",7,-5);
+
+  const r=[1.05,1.05,1.05];
+  const pts=[
+    [0.20,0.76,0.62],
+    [0.46,0.48,0.49],
+    [0.73,0.25,0.35]
+  ];
+
+  // Draw a few visible faces for each rectangular prism.
+  // The transparency intentionally reveals overlaps.
+  const facesForBox=(p,r)=>{
+    const [x0,y0,z0]=p,[x1,y1,z1]=r;
+    return [
+      [[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],
+      [[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],
+      [[x0,y0,z0],[x0,y1,z0],[x0,y1,z1],[x0,y0,z1]],
+      [[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],
+      [[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]],
+      [[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]]
+    ];
+  };
+
+  pts.forEach((p,idx)=>{
+    facesForBox(p,r).forEach((face,fi)=>{
+      const poly=document.createElementNS(NS3,"polygon");
+      poly.setAttribute("points",face.map(q=>project(q).join(",")).join(" "));
+      poly.setAttribute("class", idx===1 ? "prism-face-b" : "prism-face-a");
+      poly.style.opacity = fi<3 ? "0.78" : "0.46";
+      svg.appendChild(poly);
+    });
+  });
+
+  // Solution points on top.
+  pts.forEach((p,i)=>{
+    const P=project(p);
+    const c=document.createElementNS(NS3,"circle");
+    c.setAttribute("cx",P[0]);c.setAttribute("cy",P[1]);
+    c.setAttribute("r",7);c.setAttribute("class","solution3d");
+    svg.appendChild(c);
+    const t=document.createElementNS(NS3,"text");
+    t.setAttribute("x",P[0]+9);t.setAttribute("y",P[1]-8);
+    t.textContent=`a${i+1}`;svg.appendChild(t);
+  });
+
+  const R=project(r);
+  const rc=document.createElementNS(NS3,"circle");
+  rc.setAttribute("cx",R[0]);rc.setAttribute("cy",R[1]);
+  rc.setAttribute("r",8);rc.setAttribute("class","ref3d");
+  svg.appendChild(rc);
+  const rt=document.createElementNS(NS3,"text");
+  rt.setAttribute("x",R[0]+10);rt.setAttribute("y",R[1]-8);
+  rt.textContent="r";svg.appendChild(rt);
+
+  mount.innerHTML="";
+  mount.appendChild(svg);
+}
+renderHV3DFigure();
