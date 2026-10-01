@@ -1038,18 +1038,29 @@ function renderComparator(){
   document.querySelector("#compare-winner").textContent=`Favorece a ${metricWinner(info)}`;
   document.querySelector("#compare-interpretation").textContent=info.interpretation;
 
-  // Bars compare A and B only within each metric.
-  const max=Math.max(info.A,info.B),min=Math.min(info.A,info.B);
-  let aPct,bPct;
-  if(info.direction==="max"){
-    aPct=100*info.A/max;bPct=100*info.B/max;
-  }else{
-    // Shorter raw value is better, but bars show "quality" so invert for intuition.
-    const qa=max/info.A,qb=max/info.B,qmax=Math.max(qa,qb);
-    aPct=100*qa/qmax;bPct=100*qb/qmax;
-  }
+  // Bars now reflect the raw magnitude of the indicator.
+  // Therefore, for minimization metrics the shorter bar is better,
+  // while for maximization metrics the longer bar is better.
+  const max=Math.max(info.A,info.B) || 1;
+  const aPct=100*info.A/max;
+  const bPct=100*info.B/max;
   document.querySelector("#compare-a-bar").style.width=`${aPct}%`;
   document.querySelector("#compare-b-bar").style.width=`${bPct}%`;
+
+  const winner=metricWinner(info);
+  const cardA=document.querySelector("#ab-card-a");
+  const cardB=document.querySelector("#ab-card-b");
+  const badgeA=document.querySelector("#ab-badge-a");
+  const badgeB=document.querySelector("#ab-badge-b");
+  cardA.classList.toggle("winner", winner==="A");
+  cardB.classList.toggle("winner", winner==="B");
+  badgeA.classList.toggle("hidden", winner!=="A");
+  badgeB.classList.toggle("hidden", winner!=="B");
+
+  document.querySelector("#bar-note").textContent =
+    info.direction==="min"
+      ? "Las barras representan la magnitud del indicador: la barra más corta es mejor."
+      : "Las barras representan la magnitud del indicador: la barra más larga es mejor.";
 
   document.querySelectorAll(".compare-metric").forEach(btn=>{
     btn.classList.toggle("active",btn.dataset.metric===COMP_STATE.metric);

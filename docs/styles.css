@@ -1239,3 +1239,28 @@ h3{margin:0;font-size:1.25rem}
   color:var(--muted);
   font-size:.9rem;
 }
+
+
+/* Corrección visual del Bloque 5 */
+.ab-value{
+  position:relative;
+}
+.ab-value.winner{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(36,87,214,.10);
+}
+.ab-badge{
+  display:inline-block;
+  margin-top:8px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:rgba(36,87,214,.10);
+  color:var(--accent);
+  font-size:.74rem;
+  font-weight:850;
+}
+.bar-note{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:.82rem;
+}
