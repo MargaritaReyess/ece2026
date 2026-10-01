@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
   <header class="site-header">
@@ -666,6 +666,8 @@
               <p class="detail-note">
                 En este demo usamos Tchebycheff ponderada. Cada peso representa una preferencia distinta;
                 R2 resume qué tan buenos compromisos ofrece A a lo largo de todas ellas.
+                <strong>La dirección depende de la función de utilidad/escalarización:</strong>
+                aquí medimos desviación respecto al punto ideal, por lo que valores menores son mejores.
               </p>
             </div>
           </article>
@@ -731,10 +733,157 @@
     </section>
 
     <section id="trampas" class="section muted">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 6</p>
-        <h2>Las trampas</h2>
-        <p>Próximamente: normalización, cardinalidad, reference sets y dimensión.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 6 · Las trampas</p>
+        <h2>Ahora intentemos romper las métricas</h2>
+        <p class="section-intro">
+          Un indicador no vive aislado. Escalas, referencias, puntos dominados y dimensionalidad
+          pueden cambiar lo que vemos —o incluso la conclusión que obtenemos.
+        </p>
+
+        <div class="trap-grid">
+
+          <article class="trap-card">
+            <div class="trap-head">
+              <span class="trap-number">01</span>
+              <div>
+                <h3>Escalas incompatibles</h3>
+                <p>¿Qué pasa si un objetivo mide 100 veces más que otro?</p>
+              </div>
+            </div>
+
+            <div class="trap-toggle">
+              <button class="scale-mode active" data-scale="1">Escalas comparables</button>
+              <button class="scale-mode" data-scale="100">f₂ × 100</button>
+            </div>
+
+            <div id="scale-plot" class="trap-plot"></div>
+
+            <div class="trap-values two-col">
+              <div><span>d(r,p)</span><strong id="scale-dp">—</strong></div>
+              <div><span>d(r,q)</span><strong id="scale-dq">—</strong></div>
+            </div>
+
+            <p id="scale-message" class="trap-message"></p>
+          </article>
+
+          <article class="trap-card">
+            <div class="trap-head">
+              <span class="trap-number">02</span>
+              <div>
+                <h3>El reference set también decide</h3>
+                <p>Mismos A y B; sólo cambia qué parte del frente usamos como referencia.</p>
+              </div>
+            </div>
+
+            <div class="trap-toggle">
+              <button class="refset-mode active" data-refset="uniform">PF completo</button>
+              <button class="refset-mode" data-refset="central">Sólo región central</button>
+            </div>
+
+            <div id="refset-plot" class="trap-plot"></div>
+
+            <div class="trap-values two-col">
+              <div><span>IGD+(A)</span><strong id="refset-a">—</strong></div>
+              <div><span>IGD+(B)</span><strong id="refset-b">—</strong></div>
+            </div>
+
+            <p id="refset-message" class="trap-message"></p>
+          </article>
+
+          <article class="trap-card">
+            <div class="trap-head">
+              <span class="trap-number">03</span>
+              <div>
+                <h3>Un punto dominado puede “mejorar” IGD</h3>
+                <p>Un resultado contraintuitivo que ayuda a entender por qué apareció IGD+.</p>
+              </div>
+            </div>
+
+            <button id="dominated-toggle" class="button secondary trap-action">
+              Añadir punto dominado
+            </button>
+
+            <div id="dominated-plot" class="trap-plot"></div>
+
+            <div class="mini-table">
+              <div class="mini-row mini-header">
+                <span>Métrica</span><span>Antes</span><span>Después</span>
+              </div>
+              <div class="mini-row">
+                <span>IGD</span><span id="dom-igd-before">—</span><span id="dom-igd-after">—</span>
+              </div>
+              <div class="mini-row">
+                <span>IGD+</span><span id="dom-igdp-before">—</span><span id="dom-igdp-after">—</span>
+              </div>
+              <div class="mini-row">
+                <span>HV</span><span id="dom-hv-before">—</span><span id="dom-hv-after">—</span>
+              </div>
+            </div>
+
+            <p id="dominated-message" class="trap-message">
+              Añade el punto gris y observa qué indicador cambia.
+            </p>
+          </article>
+
+          <article class="trap-card">
+            <div class="trap-head">
+              <span class="trap-number">04</span>
+              <div>
+                <h3>Muchas dimensiones: las distancias se parecen</h3>
+                <p>En alta dimensión, distinguir “cerca” de “lejos” puede volverse más difícil.</p>
+              </div>
+            </div>
+
+            <div class="dimension-buttons">
+              <button class="dim-btn active" data-dim="2">2D</button>
+              <button class="dim-btn" data-dim="5">5D</button>
+              <button class="dim-btn" data-dim="10">10D</button>
+              <button class="dim-btn" data-dim="20">20D</button>
+              <button class="dim-btn" data-dim="50">50D</button>
+            </div>
+
+            <div class="dimension-meter">
+              <div class="dimension-track">
+                <div id="dimension-fill" class="dimension-fill"></div>
+              </div>
+              <div class="dimension-labels">
+                <span>distancias distinguibles</span>
+                <span>más parecidas</span>
+              </div>
+            </div>
+
+            <div class="dimension-value">
+              <span>promedio d<sub>nearest</sub>/d<sub>farthest</sub></span>
+              <strong id="dimension-ratio">—</strong>
+            </div>
+
+            <p class="trap-message">
+              Simulación ilustrativa con puntos aleatorios: al crecer la dimensión, la razón tiende a aumentar.
+            </p>
+          </article>
+
+        </div>
+
+        <div class="trap-checklist">
+          <p class="section-kicker">Antes de publicar una tabla de métricas</p>
+          <div class="trap-checks">
+            <span>✓ revisar escalas y normalización</span>
+            <span>✓ documentar reference set / reference point</span>
+            <span>✓ filtrar o entender puntos dominados y duplicados</span>
+            <span>✓ considerar el número de objetivos</span>
+          </div>
+        </div>
+
+        <div class="quality-summary">
+          <p class="transition-small">Idea clave</p>
+          <p class="transition-big">
+            Una métrica no sólo hereda las propiedades del algoritmo: también hereda nuestras decisiones experimentales.
+          </p>
+          <p>
+            Normalizar, construir referencias y elegir la dimensionalidad de análisis forman parte del diseño de evaluación.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -761,6 +910,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

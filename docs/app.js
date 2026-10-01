@@ -1109,3 +1109,252 @@ document.querySelectorAll(".metric-more").forEach(btn=>{
     btn.textContent=hidden ? "Ver un poco más" : "Ocultar detalle";
   });
 });
+
+
+// ---------- Bloque 6: Las trampas ----------
+const TRAP_STATE={
+  scale:1,
+  refset:"uniform",
+  dominated:false,
+  dim:2
+};
+
+function trapScaleSVG(scale){
+  const W=520,H=320,pad=48;
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const r=[0.5,0.5],p=[0.62,0.53],q=[0.53,0.62];
+
+  const pts=[r,p,q].map(([x,y])=>[x,y*scale]);
+  const maxY=Math.max(...pts.map(v=>v[1]))*1.15;
+  const sx=x=>pad+x*(W-2*pad);
+  const sy=y=>H-pad-(y/maxY)*(H-2*pad);
+
+  [0,.25,.5,.75,1].forEach(t=>{
+    const v=document.createElementNS(NS,"line");
+    v.setAttribute("x1",sx(t));v.setAttribute("x2",sx(t));
+    v.setAttribute("y1",pad);v.setAttribute("y2",H-pad);
+    v.setAttribute("class","grid");svg.appendChild(v);
+  });
+  [0,.25,.5,.75,1].forEach(t=>{
+    const yy=t*maxY;
+    const h=document.createElementNS(NS,"line");
+    h.setAttribute("x1",pad);h.setAttribute("x2",W-pad);
+    h.setAttribute("y1",sy(yy));h.setAttribute("y2",sy(yy));
+    h.setAttribute("class","grid");svg.appendChild(h);
+  });
+
+  const ax=document.createElementNS(NS,"line");
+  ax.setAttribute("x1",pad);ax.setAttribute("x2",W-pad);
+  ax.setAttribute("y1",H-pad);ax.setAttribute("y2",H-pad);
+  ax.setAttribute("class","axis");svg.appendChild(ax);
+  const ay=document.createElementNS(NS,"line");
+  ay.setAttribute("x1",pad);ay.setAttribute("x2",pad);
+  ay.setAttribute("y1",pad);ay.setAttribute("y2",H-pad);
+  ay.setAttribute("class","axis");svg.appendChild(ay);
+
+  const drawLink=(a,b)=>{
+    const l=document.createElementNS(NS,"line");
+    l.setAttribute("x1",sx(a[0]));l.setAttribute("y1",sy(a[1]));
+    l.setAttribute("x2",sx(b[0]));l.setAttribute("y2",sy(b[1]));
+    l.setAttribute("class","link");svg.appendChild(l);
+  };
+  drawLink(pts[0],pts[1]);drawLink(pts[0],pts[2]);
+
+  [
+    [pts[0],"refpt","r"],
+    [pts[1],"p-a","p"],
+    [pts[2],"p-b","q"]
+  ].forEach(([pt,cls,label])=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(pt[0]));c.setAttribute("cy",sy(pt[1]));
+    c.setAttribute("r",7);c.setAttribute("class",cls);svg.appendChild(c);
+    const t=document.createElementNS(NS,"text");
+    t.setAttribute("x",sx(pt[0])+9);t.setAttribute("y",sy(pt[1])-8);
+    t.textContent=label;svg.appendChild(t);
+  });
+
+  return svg;
+}
+
+function renderScaleTrap(){
+  const mount=document.querySelector("#scale-plot");
+  if(!mount) return;
+  mount.innerHTML="";
+  mount.appendChild(trapScaleSVG(TRAP_STATE.scale));
+
+  const r=[0.5,0.5*TRAP_STATE.scale];
+  const p=[0.62,0.53*TRAP_STATE.scale];
+  const q=[0.53,0.62*TRAP_STATE.scale];
+  const dp=euclidean(r,p),dq=euclidean(r,q);
+
+  document.querySelector("#scale-dp").textContent=dp.toFixed(3);
+  document.querySelector("#scale-dq").textContent=dq.toFixed(3);
+
+  let msg;
+  if(Math.abs(dp-dq)<1e-9){
+    msg="Con escalas comparables, p y q están a la misma distancia de r.";
+  }else{
+    const best=dp<dq?"p":"q";
+    msg=`Al ampliar f₂, ese objetivo domina la distancia: ahora ${best} parece mucho más cercano.`;
+  }
+  document.querySelector("#scale-message").textContent=msg;
+  document.querySelectorAll(".scale-mode").forEach(b=>b.classList.toggle("active",+b.dataset.scale===TRAP_STATE.scale));
+}
+document.querySelectorAll(".scale-mode").forEach(btn=>btn.addEventListener("click",()=>{
+  TRAP_STATE.scale=+btn.dataset.scale;renderScaleTrap();
+}));
+
+function trapReferenceSet(kind){
+  const xs=kind==="uniform"
+    ? Array.from({length:41},(_,i)=>i/40)
+    : Array.from({length:31},(_,i)=>0.25+i*(0.50/30));
+  return xs.map(x=>[x,paretoY(x)]);
+}
+
+function igdPlusFor(A,R){
+  return R.reduce((sum,r)=>sum+Math.min(...A.map(a=>dPlus(r,a))),0)/R.length;
+}
+
+function refsetSVG(kind){
+  const W=520,H=320,pad=46;
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const {sx,sy}=scaleFactory(W,H,pad);
+
+  let d="";
+  for(let i=0;i<=120;i++){
+    const x=i/120,y=paretoY(x);
+    d+=(i===0?"M":"L")+sx(x)+" "+sy(y)+" ";
+  }
+  const front=document.createElementNS(NS,"path");
+  front.setAttribute("d",d);front.setAttribute("class","front");svg.appendChild(front);
+
+  trapReferenceSet(kind).forEach(r=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(r[0]));c.setAttribute("cy",sy(r[1]));
+    c.setAttribute("r",3);c.setAttribute("class","refsetpt");svg.appendChild(c);
+  });
+
+  SETS.A.forEach(p=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));
+    c.setAttribute("r",5.5);c.setAttribute("class","p-a");svg.appendChild(c);
+  });
+  SETS.B.forEach(p=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));
+    c.setAttribute("r",5.5);c.setAttribute("class","p-b");svg.appendChild(c);
+  });
+  return svg;
+}
+
+function renderRefsetTrap(){
+  const mount=document.querySelector("#refset-plot");
+  if(!mount) return;
+  mount.innerHTML="";
+  mount.appendChild(refsetSVG(TRAP_STATE.refset));
+
+  const R=trapReferenceSet(TRAP_STATE.refset);
+  const a=igdPlusFor(SETS.A,R),b=igdPlusFor(SETS.B,R);
+  document.querySelector("#refset-a").textContent=a.toFixed(4);
+  document.querySelector("#refset-b").textContent=b.toFixed(4);
+  document.querySelector("#refset-message").textContent =
+    a<b
+      ? "Con una referencia concentrada en el centro, A resulta favorecido."
+      : "Con una referencia que cubre todo el PF, B resulta favorecido.";
+  document.querySelectorAll(".refset-mode").forEach(btn=>btn.classList.toggle("active",btn.dataset.refset===TRAP_STATE.refset));
+}
+document.querySelectorAll(".refset-mode").forEach(btn=>btn.addEventListener("click",()=>{
+  TRAP_STATE.refset=btn.dataset.refset;renderRefsetTrap();
+}));
+
+function igdPlain(A,R){
+  return R.reduce((sum,r)=>sum+Math.min(...A.map(a=>euclidean(r,a))),0)/R.length;
+}
+
+function dominatedSVG(show){
+  const W=520,H=320,pad=46;
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const {sx,sy}=scaleFactory(W,H,pad);
+
+  let d="";
+  for(let i=0;i<=120;i++){
+    const x=i/120,y=paretoY(x);
+    d+=(i===0?"M":"L")+sx(x)+" "+sy(y)+" ";
+  }
+  const front=document.createElementNS(NS,"path");
+  front.setAttribute("d",d);front.setAttribute("class","front");svg.appendChild(front);
+
+  SETS.A.forEach(p=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));
+    c.setAttribute("r",6);c.setAttribute("class","p-a");svg.appendChild(c);
+  });
+
+  if(show){
+    const p=[0.25,0.73];
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));
+    c.setAttribute("r",7);c.setAttribute("class","dompt");svg.appendChild(c);
+    const t=document.createElementNS(NS,"text");
+    t.setAttribute("x",sx(p[0])+9);t.setAttribute("y",sy(p[1])-8);
+    t.textContent="dominado";svg.appendChild(t);
+  }
+  return svg;
+}
+
+function renderDominatedTrap(){
+  const mount=document.querySelector("#dominated-plot");
+  if(!mount) return;
+  mount.innerHTML="";
+  mount.appendChild(dominatedSVG(TRAP_STATE.dominated));
+
+  const R=referenceSet(101);
+  const Abase=SETS.A.map(p=>[...p]);
+  const Aplus=[...Abase,[0.25,0.73]];
+
+  const vals={
+    igd0:igdPlain(Abase,R), igd1:igdPlain(Aplus,R),
+    igdp0:igdPlusFor(Abase,R), igdp1:igdPlusFor(Aplus,R),
+    hv0:hv2D(Abase,[1.10,1.10]), hv1:hv2D(Aplus,[1.10,1.10])
+  };
+
+  document.querySelector("#dom-igd-before").textContent=vals.igd0.toFixed(4);
+  document.querySelector("#dom-igd-after").textContent=vals.igd1.toFixed(4);
+  document.querySelector("#dom-igdp-before").textContent=vals.igdp0.toFixed(4);
+  document.querySelector("#dom-igdp-after").textContent=vals.igdp1.toFixed(4);
+  document.querySelector("#dom-hv-before").textContent=vals.hv0.toFixed(4);
+  document.querySelector("#dom-hv-after").textContent=vals.hv1.toFixed(4);
+
+  document.querySelector("#dominated-toggle").textContent=
+    TRAP_STATE.dominated?"Quitar punto dominado":"Añadir punto dominado";
+
+  document.querySelector("#dominated-message").textContent=
+    TRAP_STATE.dominated
+      ? "IGD mejora aunque añadimos una solución dominada; IGD+ y HV permanecen iguales."
+      : "Añade el punto gris y observa qué indicador cambia.";
+}
+const domBtn=document.querySelector("#dominated-toggle");
+if(domBtn) domBtn.addEventListener("click",()=>{
+  TRAP_STATE.dominated=!TRAP_STATE.dominated;renderDominatedTrap();
+});
+
+// Deterministic illustrative simulation of distance concentration.
+const DIM_RATIOS={2:0.03,5:0.17,10:0.31,20:0.46,50:0.63};
+
+function renderDimensionTrap(){
+  const ratio=DIM_RATIOS[TRAP_STATE.dim];
+  document.querySelector("#dimension-ratio").textContent=ratio.toFixed(2);
+  document.querySelector("#dimension-fill").style.width=`${ratio*100}%`;
+  document.querySelectorAll(".dim-btn").forEach(btn=>btn.classList.toggle("active",+btn.dataset.dim===TRAP_STATE.dim));
+}
+document.querySelectorAll(".dim-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  TRAP_STATE.dim=+btn.dataset.dim;renderDimensionTrap();
+}));
+
+renderScaleTrap();
+renderRefsetTrap();
+renderDominatedTrap();
+renderDimensionTrap();

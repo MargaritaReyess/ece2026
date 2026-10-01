@@ -1264,3 +1264,202 @@ h3{margin:0;font-size:1.25rem}
   color:var(--muted);
   font-size:.82rem;
 }
+
+
+/* Bloque 6: Las trampas */
+.trap-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+  margin-top:34px;
+}
+.trap-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow:var(--shadow);
+}
+.trap-head{
+  display:flex;
+  gap:13px;
+  align-items:flex-start;
+}
+.trap-head h3{
+  margin:0 0 .2em;
+  font-size:1.18rem;
+}
+.trap-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:.93rem;
+}
+.trap-number{
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  width:38px;height:38px;
+  border-radius:999px;
+  background:var(--surface-2);
+  color:var(--accent);
+  font-weight:850;
+  font-size:.82rem;
+}
+.trap-toggle{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:18px 0 12px;
+}
+.trap-toggle button,
+.dimension-buttons button{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:800;
+  color:var(--muted);
+  cursor:pointer;
+}
+.trap-toggle button.active,
+.dimension-buttons button.active{
+  border-color:var(--accent);
+  color:var(--accent);
+  box-shadow:0 0 0 3px rgba(36,87,214,.09);
+}
+.trap-plot{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  overflow:hidden;
+}
+.trap-plot svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.trap-plot .grid{stroke:#e8edf4;stroke-width:1}
+.trap-plot .axis{stroke:#94a3b8;stroke-width:1.2}
+.trap-plot .front{fill:none;stroke:#8f9aaa;stroke-width:2;stroke-dasharray:6 5}
+.trap-plot .refpt{fill:#fff;stroke:#111827;stroke-width:2}
+.trap-plot .p-a{fill:#2457d6;stroke:#fff;stroke-width:2}
+.trap-plot .p-b{fill:#e07a1f;stroke:#fff;stroke-width:2}
+.trap-plot .refsetpt{fill:#fff;stroke:#7c8799;stroke-width:1.4}
+.trap-plot .dompt{fill:#94a3b8;stroke:#fff;stroke-width:2}
+.trap-plot .link{stroke:#cbd5e1;stroke-width:1.8;stroke-dasharray:4 4}
+.trap-plot text{fill:#64748b;font-size:11px}
+.trap-values{
+  display:grid;
+  gap:10px;
+  margin-top:13px;
+}
+.trap-values.two-col{grid-template-columns:1fr 1fr}
+.trap-values div{
+  padding:11px 13px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface-2);
+}
+.trap-values span{
+  display:block;
+  color:var(--muted);
+  font-size:.8rem;
+}
+.trap-values strong{font-size:1.12rem}
+.trap-message{
+  margin:11px 0 0;
+  color:var(--muted);
+  font-size:.91rem;
+}
+.trap-action{
+  margin:17px 0 12px;
+}
+.mini-table{
+  margin-top:13px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+.mini-row{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr;
+}
+.mini-row span{
+  padding:9px 11px;
+  border-bottom:1px solid var(--line);
+  font-size:.88rem;
+}
+.mini-row:last-child span{border-bottom:0}
+.mini-header{
+  background:var(--surface-2);
+  color:var(--muted);
+  font-weight:800;
+}
+.dimension-buttons{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+.dimension-meter{margin-top:10px}
+.dimension-track{
+  height:22px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--surface-2);
+  overflow:hidden;
+}
+.dimension-fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#2457d6,#e07a1f);
+  transition:width .25s ease;
+}
+.dimension-labels{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--muted);
+  font-size:.75rem;
+  margin-top:5px;
+}
+.dimension-value{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:end;
+  margin-top:16px;
+  padding:13px 14px;
+  background:var(--surface-2);
+  border-radius:12px;
+}
+.dimension-value span{color:var(--muted);font-size:.84rem}
+.dimension-value strong{font-size:1.4rem}
+.trap-checklist{
+  margin-top:28px;
+  padding:24px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+}
+.trap-checks{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px 18px;
+  margin-top:12px;
+}
+.trap-checks span{
+  padding:10px 12px;
+  background:var(--surface-2);
+  border-radius:12px;
+  font-size:.94rem;
+}
+@media (max-width:900px){
+  .trap-grid{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .trap-checks{grid-template-columns:1fr}
+  .trap-values.two-col{grid-template-columns:1fr}
+}
