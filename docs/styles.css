@@ -1189,3 +1189,53 @@ h3{margin:0;font-size:1.25rem}
   .speaker-block{align-items:flex-start}
   .cimat-logo{width:65px;height:auto}
 }
+
+
+/* Ajustes Bloque 5: contraste A/B y detalles expandibles */
+.compare-plot .pt-a{fill:#2457d6}
+.compare-plot .pt-b{fill:#e07a1f}
+.compare-a{background:#2457d6}
+.compare-b{background:#e07a1f}
+.bar-fill.a{background:#2457d6}
+.bar-fill.b{background:#e07a1f}
+
+.metric-detail-card{
+  align-self:start;
+}
+.metric-more{
+  margin-top:12px;
+  border:1px solid var(--line);
+  background:var(--surface-2);
+  color:var(--text);
+  border-radius:999px;
+  padding:7px 11px;
+  font-size:.82rem;
+  font-weight:800;
+  cursor:pointer;
+}
+.metric-more:hover{
+  border-color:var(--accent);
+}
+.metric-detail{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+}
+.metric-detail p{
+  font-size:.88rem;
+  line-height:1.55;
+}
+.metric-detail .metric-formula{
+  margin:10px 0;
+  font-size:.94rem;
+  white-space:normal;
+}
+.detail-note{
+  color:var(--muted);
+  margin-bottom:0 !important;
+}
+.r2-name-note{
+  margin:14px 2px 0;
+  color:var(--muted);
+  font-size:.9rem;
+}

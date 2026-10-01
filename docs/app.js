@@ -1088,3 +1088,13 @@ function fillCompareMatrix(){
 
 fillCompareMatrix();
 renderComparator();
+
+
+// ---------- Detalles expandibles: epsilon+ y R2 ----------
+document.querySelectorAll(".metric-more").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const panel=document.getElementById(btn.dataset.target);
+    const hidden=panel.classList.toggle("hidden");
+    btn.textContent=hidden ? "Ver un poco más" : "Ocultar detalle";
+  });
+});

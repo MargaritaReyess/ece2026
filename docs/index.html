@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <header class="site-header">
@@ -629,15 +629,49 @@
             <h3>HV</h3>
             <p>Región dominada respecto a un punto de referencia.</p>
           </article>
-          <article>
+          <article class="metric-detail-card">
             <h3>ε+</h3>
-            <p>Peor desplazamiento aditivo necesario para cubrir el reference set.</p>
+            <p>Peor desplazamiento aditivo necesario para cubrir el <em>reference set</em>.</p>
+            <button class="metric-more" data-target="detail-eps">Ver un poco más</button>
+            <div id="detail-eps" class="metric-detail hidden">
+              <p>
+                Para cada punto de referencia, busca la solución de A que requiera el menor
+                desplazamiento aditivo para alcanzarlo. Después se queda con el <strong>peor caso</strong>.
+              </p>
+              <div class="metric-formula compact">
+                ε⁺(A,R) = maxᵣ minₐ maxⱼ (aⱼ − rⱼ)
+              </div>
+              <p class="detail-note">
+                Interpretación: ¿cuánto tendría que “mejorar” A, en el peor caso, para cubrir toda la referencia?
+                Menor es mejor.
+              </p>
+            </div>
           </article>
-          <article>
+          <article class="metric-detail-card">
             <h3>R2</h3>
             <p>Promedia la mejor utilidad escalarizada sobre un conjunto de pesos.</p>
+            <button class="metric-more" data-target="detail-r2">Ver un poco más</button>
+            <div id="detail-r2" class="metric-detail hidden">
+              <p>
+                R2 pertenece a la familia <strong>R1–R2–R3</strong>. No es el coeficiente de determinación.
+                Para cada vector de pesos, evalúa todas las soluciones con una función de escalarización
+                y conserva el mejor valor.
+              </p>
+              <div class="metric-formula compact">
+                R2(A) = 1/|W| Σ<sub>w∈W</sub> u*(A,w)
+              </div>
+              <p class="detail-note">
+                En este demo usamos Tchebycheff ponderada. Cada peso representa una preferencia distinta;
+                R2 resume qué tan buenos compromisos ofrece A a lo largo de todas ellas.
+              </p>
+            </div>
           </article>
         </div>
+
+        <p class="r2-name-note">
+          <strong>Nota:</strong> “R2” es simplemente el nombre del segundo indicador de la familia R;
+          no significa <em>R-squared</em> ni tiene relación con el coeficiente de determinación.
+        </p>
 
         <div class="compare-matrix-wrap">
           <div class="compare-matrix-head">
@@ -724,6 +758,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
