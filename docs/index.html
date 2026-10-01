@@ -547,10 +547,149 @@
     </section>
 
     <section id="comparador" class="section">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 5</p>
-        <h2>Comparador de métricas</h2>
-        <p>Próximamente: A vs. B según diferentes indicadores.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 5 · Comparador</p>
+        <h2>La métrica puede cambiar la conclusión</h2>
+        <p class="section-intro">
+          Mismos conjuntos. Mismos puntos. Distintas preguntas. Compara A y B con varios
+          indicadores y observa cómo cambia la lectura del resultado.
+        </p>
+
+        <div class="compare-lab">
+          <div class="compare-layout">
+            <div>
+              <div id="compare-plot" class="compare-plot"
+                   role="img" aria-label="Comparación de los conjuntos A y B sobre el mismo frente de Pareto"></div>
+              <div class="compare-legend">
+                <span><i class="legend-dot compare-a"></i> conjunto A</span>
+                <span><i class="legend-dot compare-b"></i> conjunto B</span>
+                <span><i class="legend-line compare-front"></i> frente de Pareto</span>
+              </div>
+            </div>
+
+            <aside class="compare-side">
+              <span class="control-label">Indicador</span>
+              <div class="metric-tabs" role="group" aria-label="Seleccionar indicador para comparar A y B">
+                <button class="compare-metric active" data-metric="GD">GD</button>
+                <button class="compare-metric" data-metric="IGD+">IGD+</button>
+                <button class="compare-metric" data-metric="HV">HV</button>
+                <button class="compare-metric" data-metric="EPS">ε+</button>
+                <button class="compare-metric" data-metric="R2">R2</button>
+              </div>
+
+              <div class="compare-result-card">
+                <p id="compare-title" class="compare-title">Generational Distance (GD)</p>
+                <p id="compare-question" class="compare-question">
+                  ¿Qué tan cerca están mis soluciones del frente?
+                </p>
+
+                <div class="ab-values">
+                  <div class="ab-value">
+                    <span>A</span>
+                    <strong id="compare-a-value">—</strong>
+                  </div>
+                  <div class="ab-value">
+                    <span>B</span>
+                    <strong id="compare-b-value">—</strong>
+                  </div>
+                </div>
+
+                <div class="compare-bars">
+                  <div class="bar-row">
+                    <span>A</span>
+                    <div class="bar-track"><div id="compare-a-bar" class="bar-fill a"></div></div>
+                  </div>
+                  <div class="bar-row">
+                    <span>B</span>
+                    <div class="bar-track"><div id="compare-b-bar" class="bar-fill b"></div></div>
+                  </div>
+                </div>
+
+                <div class="compare-verdict">
+                  <span id="compare-direction">menor es mejor</span>
+                  <strong id="compare-winner">—</strong>
+                </div>
+
+                <p id="compare-interpretation" class="compare-interpretation"></p>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="metric-glossary">
+          <article>
+            <h3>GD</h3>
+            <p>Convergencia: distancia desde la aproximación hacia el frente.</p>
+          </article>
+          <article>
+            <h3>IGD+</h3>
+            <p>Convergencia + cobertura, con distancia modificada consistente con dominancia.</p>
+          </article>
+          <article>
+            <h3>HV</h3>
+            <p>Región dominada respecto a un punto de referencia.</p>
+          </article>
+          <article>
+            <h3>ε+</h3>
+            <p>Peor desplazamiento aditivo necesario para cubrir el reference set.</p>
+          </article>
+          <article>
+            <h3>R2</h3>
+            <p>Promedia la mejor utilidad escalarizada sobre un conjunto de pesos.</p>
+          </article>
+        </div>
+
+        <div class="compare-matrix-wrap">
+          <div class="compare-matrix-head">
+            <div>
+              <p class="section-kicker">Los mismos datos, distintas lecturas</p>
+              <h3>Resumen del escenario A vs. B</h3>
+            </div>
+            <button id="reveal-matrix" class="button secondary">Revelar resumen</button>
+          </div>
+
+          <div id="compare-matrix" class="compare-matrix hidden">
+            <div class="matrix-row matrix-header">
+              <span>Indicador</span>
+              <span>A</span>
+              <span>B</span>
+              <span>Resultado</span>
+            </div>
+            <div class="matrix-row">
+              <span>GD</span><span id="m-gd-a">—</span><span id="m-gd-b">—</span><strong>A</strong>
+            </div>
+            <div class="matrix-row">
+              <span>IGD+</span><span id="m-igdp-a">—</span><span id="m-igdp-b">—</span><strong>B</strong>
+            </div>
+            <div class="matrix-row">
+              <span>HV</span><span id="m-hv-a">—</span><span id="m-hv-b">—</span><strong>B</strong>
+            </div>
+            <div class="matrix-row">
+              <span>ε+</span><span id="m-eps-a">—</span><span id="m-eps-b">—</span><strong>B</strong>
+            </div>
+            <div class="matrix-row">
+              <span>R2</span><span id="m-r2-a">—</span><span id="m-r2-b">—</span><strong>B</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="reference-warning">
+          <strong>No compares las magnitudes entre métricas.</strong>
+          <span>
+            Cada indicador tiene su propia escala y significado. Los valores sólo se comparan
+            entre A y B dentro del mismo indicador.
+          </span>
+        </div>
+
+        <div class="quality-summary">
+          <p class="transition-small">Idea clave</p>
+          <p class="transition-big">
+            Cambiar el indicador no cambia los resultados del algoritmo; cambia la pregunta con la que los evaluamos.
+          </p>
+          <p>
+            Por eso una comparación sólida no debería limitarse a reportar un único número sin justificar qué propiedad de calidad representa.
+          </p>
+        </div>
       </div>
     </section>
 

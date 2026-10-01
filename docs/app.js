@@ -881,3 +881,210 @@ function renderHV3DFigure(){
   mount.appendChild(svg);
 }
 renderHV3DFigure();
+
+
+// ---------- Bloque 5: comparador de métricas ----------
+const COMP_STATE={metric:"GD"};
+const COMP_R=referenceSet(401);
+
+function additiveEpsilon(A,R){
+  let worst=-Infinity;
+  R.forEach(r=>{
+    let best=Infinity;
+    A.forEach(a=>{
+      const eps=Math.max(a[0]-r[0],a[1]-r[1]);
+      if(eps<best) best=eps;
+    });
+    if(best>worst) worst=best;
+  });
+  return worst;
+}
+
+function r2Indicator(A,nWeights=101){
+  const z=[0,0];
+  let sum=0;
+  for(let i=1;i<=nWeights;i++){
+    const w1=i/(nWeights+1),w2=1-w1;
+    let best=Infinity;
+    A.forEach(a=>{
+      const u=Math.max(
+        w1*Math.abs(a[0]-z[0]),
+        w2*Math.abs(a[1]-z[1])
+      );
+      if(u<best) best=u;
+    });
+    sum+=best;
+  }
+  return sum/nWeights;
+}
+
+function compareMetrics(){
+  return {
+    GD:{
+      name:"Generational Distance (GD)",
+      question:"¿Qué tan cerca están mis soluciones del frente?",
+      direction:"min",
+      A:metricValue("A","GD"),
+      B:metricValue("B","GD"),
+      interpretation:"GD sólo mira convergencia. A está prácticamente sobre el frente, aunque cubre una región más pequeña."
+    },
+    "IGD+":{
+      name:"Inverted Generational Distance Plus (IGD+)",
+      question:"¿Qué tan bien represento el frente sin penalizar mejoras Pareto?",
+      direction:"min",
+      A:metricValue("A","IGD+"),
+      B:metricValue("B","IGD+"),
+      interpretation:"IGD+ penaliza los huecos de A. B cubre una región mucho más amplia y por eso obtiene un valor menor."
+    },
+    HV:{
+      name:"Hypervolume (HV)",
+      question:"¿Cuánto espacio domina el conjunto respecto a r = (1.10, 1.10)?",
+      direction:"max",
+      A:hv2D(SETS.A,[1.10,1.10]),
+      B:hv2D(SETS.B,[1.10,1.10]),
+      interpretation:"HV favorece a B porque su mayor extensión produce más región dominada, pese a su pequeña pérdida de convergencia."
+    },
+    EPS:{
+      name:"Indicador epsilon aditivo (ε+)",
+      question:"¿Cuál es el peor desplazamiento aditivo necesario para cubrir la referencia?",
+      direction:"min",
+      A:additiveEpsilon(SETS.A,COMP_R),
+      B:additiveEpsilon(SETS.B,COMP_R),
+      interpretation:"ε+ se concentra en el peor caso. Los extremos ausentes de A producen una penalización mayor."
+    },
+    R2:{
+      name:"Indicador R2",
+      question:"¿Qué conjunto ofrece mejores compromisos a lo largo de múltiples preferencias?",
+      direction:"min",
+      A:r2Indicator(SETS.A),
+      B:r2Indicator(SETS.B),
+      interpretation:"R2 integra una familia de funciones de escalarización. En este escenario, la mayor cobertura de B le da mejores compromisos globales."
+    }
+  };
+}
+
+const COMP_DATA=compareMetrics();
+
+function makeComparePlot(){
+  const width=680,height=430,pad=52;
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+  const {sx,sy}=scaleFactory(width,height,pad);
+
+  [0,.25,.5,.75,1].forEach(t=>{
+    const v=document.createElementNS(NS,"line");
+    v.setAttribute("x1",sx(t));v.setAttribute("x2",sx(t));
+    v.setAttribute("y1",sy(0));v.setAttribute("y2",sy(1));
+    v.setAttribute("class","grid");svg.appendChild(v);
+    const h=document.createElementNS(NS,"line");
+    h.setAttribute("x1",sx(0));h.setAttribute("x2",sx(1));
+    h.setAttribute("y1",sy(t));h.setAttribute("y2",sy(t));
+    h.setAttribute("class","grid");svg.appendChild(h);
+  });
+
+  const ax=document.createElementNS(NS,"line");
+  ax.setAttribute("x1",sx(0));ax.setAttribute("x2",sx(1));
+  ax.setAttribute("y1",sy(0));ax.setAttribute("y2",sy(0));
+  ax.setAttribute("class","axis");svg.appendChild(ax);
+  const ay=document.createElementNS(NS,"line");
+  ay.setAttribute("x1",sx(0));ay.setAttribute("x2",sx(0));
+  ay.setAttribute("y1",sy(0));ay.setAttribute("y2",sy(1));
+  ay.setAttribute("class","axis");svg.appendChild(ay);
+
+  let d="";
+  for(let i=0;i<=140;i++){
+    const x=i/140,y=paretoY(x);
+    d+=(i===0?"M":"L")+sx(x)+" "+sy(y)+" ";
+  }
+  const front=document.createElementNS(NS,"path");
+  front.setAttribute("d",d);front.setAttribute("class","front");svg.appendChild(front);
+
+  SETS.A.forEach(p=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));
+    c.setAttribute("r",7);c.setAttribute("class","pt-a");svg.appendChild(c);
+  });
+  SETS.B.forEach(p=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",sx(p[0]));c.setAttribute("cy",sy(p[1]));
+    c.setAttribute("r",6.5);c.setAttribute("class","pt-b");svg.appendChild(c);
+  });
+
+  const tx=document.createElementNS(NS,"text");
+  tx.setAttribute("x",width-28);tx.setAttribute("y",height-14);tx.textContent="f₁";svg.appendChild(tx);
+  const ty=document.createElementNS(NS,"text");
+  ty.setAttribute("x",14);ty.setAttribute("y",27);ty.textContent="f₂";svg.appendChild(ty);
+
+  return svg;
+}
+
+function metricWinner(info){
+  if(info.direction==="min") return info.A<info.B ? "A" : "B";
+  return info.A>info.B ? "A" : "B";
+}
+
+function renderComparator(){
+  const mount=document.querySelector("#compare-plot");
+  if(!mount) return;
+
+  if(!mount.hasChildNodes()) mount.appendChild(makeComparePlot());
+
+  const info=COMP_DATA[COMP_STATE.metric];
+  document.querySelector("#compare-title").textContent=info.name;
+  document.querySelector("#compare-question").textContent=info.question;
+  document.querySelector("#compare-a-value").textContent=info.A.toFixed(4);
+  document.querySelector("#compare-b-value").textContent=info.B.toFixed(4);
+  document.querySelector("#compare-direction").textContent=info.direction==="min"?"menor es mejor":"mayor es mejor";
+  document.querySelector("#compare-winner").textContent=`Favorece a ${metricWinner(info)}`;
+  document.querySelector("#compare-interpretation").textContent=info.interpretation;
+
+  // Bars compare A and B only within each metric.
+  const max=Math.max(info.A,info.B),min=Math.min(info.A,info.B);
+  let aPct,bPct;
+  if(info.direction==="max"){
+    aPct=100*info.A/max;bPct=100*info.B/max;
+  }else{
+    // Shorter raw value is better, but bars show "quality" so invert for intuition.
+    const qa=max/info.A,qb=max/info.B,qmax=Math.max(qa,qb);
+    aPct=100*qa/qmax;bPct=100*qb/qmax;
+  }
+  document.querySelector("#compare-a-bar").style.width=`${aPct}%`;
+  document.querySelector("#compare-b-bar").style.width=`${bPct}%`;
+
+  document.querySelectorAll(".compare-metric").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.metric===COMP_STATE.metric);
+  });
+}
+
+document.querySelectorAll(".compare-metric").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    COMP_STATE.metric=btn.dataset.metric;
+    renderComparator();
+  });
+});
+
+const revealMatrix=document.querySelector("#reveal-matrix");
+if(revealMatrix){
+  revealMatrix.addEventListener("click",()=>{
+    const matrix=document.querySelector("#compare-matrix");
+    const hidden=matrix.classList.toggle("hidden");
+    revealMatrix.textContent=hidden?"Revelar resumen":"Ocultar resumen";
+  });
+}
+
+function fillCompareMatrix(){
+  const ids={
+    GD:["m-gd-a","m-gd-b"],
+    "IGD+":["m-igdp-a","m-igdp-b"],
+    HV:["m-hv-a","m-hv-b"],
+    EPS:["m-eps-a","m-eps-b"],
+    R2:["m-r2-a","m-r2-b"]
+  };
+  Object.entries(ids).forEach(([k,[aId,bId]])=>{
+    document.getElementById(aId).textContent=COMP_DATA[k].A.toFixed(4);
+    document.getElementById(bId).textContent=COMP_DATA[k].B.toFixed(4);
+  });
+}
+
+fillCompareMatrix();
+renderComparator();
