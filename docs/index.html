@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=9" />
+  <link rel="stylesheet" href="styles.css?v=10" />
 </head>
 <body>
   <header class="site-header">
@@ -858,8 +858,23 @@
               <strong id="dimension-ratio">—</strong>
             </div>
 
+            <div class="dimension-explainer">
+              <p class="dimension-explainer-title">¿Qué estamos calculando?</p>
+              <p>
+                Para cada punto <em>xᵢ</em> buscamos su vecino más cercano y su punto más lejano.
+                Calculamos el cociente
+              </p>
+              <div class="metric-formula compact">
+                ρᵢ = d<sub>nearest</sub>(xᵢ) / d<sub>farthest</sub>(xᵢ)
+              </div>
+              <p>
+                y después promediamos esos cocientes sobre todos los puntos.
+                Si <strong>ρ̄ → 1</strong>, “cerca” y “lejos” empiezan a parecerse.
+              </p>
+            </div>
+
             <p class="trap-message">
-              Simulación ilustrativa con puntos aleatorios: al crecer la dimensión, la razón tiende a aumentar.
+              Simulación reproducible con 80 puntos uniformes en [0,1]<sup>d</sup> y distancia euclidiana.
             </p>
           </article>
 
@@ -910,6 +925,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

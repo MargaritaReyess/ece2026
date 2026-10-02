@@ -1322,11 +1322,15 @@ function renderDominatedTrap(){
   };
 
   document.querySelector("#dom-igd-before").textContent=vals.igd0.toFixed(4);
-  document.querySelector("#dom-igd-after").textContent=vals.igd1.toFixed(4);
   document.querySelector("#dom-igdp-before").textContent=vals.igdp0.toFixed(4);
-  document.querySelector("#dom-igdp-after").textContent=vals.igdp1.toFixed(4);
   document.querySelector("#dom-hv-before").textContent=vals.hv0.toFixed(4);
-  document.querySelector("#dom-hv-after").textContent=vals.hv1.toFixed(4);
+
+  document.querySelector("#dom-igd-after").textContent=
+    TRAP_STATE.dominated ? vals.igd1.toFixed(4) : "—";
+  document.querySelector("#dom-igdp-after").textContent=
+    TRAP_STATE.dominated ? vals.igdp1.toFixed(4) : "—";
+  document.querySelector("#dom-hv-after").textContent=
+    TRAP_STATE.dominated ? vals.hv1.toFixed(4) : "—";
 
   document.querySelector("#dominated-toggle").textContent=
     TRAP_STATE.dominated?"Quitar punto dominado":"Añadir punto dominado";
@@ -1341,8 +1345,44 @@ if(domBtn) domBtn.addEventListener("click",()=>{
   TRAP_STATE.dominated=!TRAP_STATE.dominated;renderDominatedTrap();
 });
 
-// Deterministic illustrative simulation of distance concentration.
-const DIM_RATIOS={2:0.03,5:0.17,10:0.31,20:0.46,50:0.63};
+// Reproducible simulation of distance concentration.
+// 80 points are sampled uniformly in [0,1]^d using a fixed pseudo-random seed.
+function mulberry32(seed){
+  return function(){
+    let t=seed+=0x6D2B79F5;
+    t=Math.imul(t^(t>>>15),t|1);
+    t^=t+Math.imul(t^(t>>>7),t|61);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+
+function averageNearestFarthestRatio(dim,n=80){
+  const rand=mulberry32(2026+dim);
+  const pts=Array.from({length:n},()=>Array.from({length:dim},()=>rand()));
+  let total=0;
+
+  for(let i=0;i<n;i++){
+    let nearest=Infinity, farthest=0;
+    for(let j=0;j<n;j++){
+      if(i===j) continue;
+      let sum=0;
+      for(let k=0;k<dim;k++){
+        const delta=pts[i][k]-pts[j][k];
+        sum+=delta*delta;
+      }
+      const dist=Math.sqrt(sum);
+      if(dist<nearest) nearest=dist;
+      if(dist>farthest) farthest=dist;
+    }
+    total+=nearest/farthest;
+  }
+  return total/n;
+}
+
+const DIM_RATIOS={};
+[2,5,10,20,50].forEach(d=>{
+  DIM_RATIOS[d]=averageNearestFarthestRatio(d);
+});
 
 function renderDimensionTrap(){
   const ratio=DIM_RATIOS[TRAP_STATE.dim];

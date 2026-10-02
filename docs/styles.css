@@ -1463,3 +1463,28 @@ h3{margin:0;font-size:1.25rem}
   .trap-checks{grid-template-columns:1fr}
   .trap-values.two-col{grid-template-columns:1fr}
 }
+
+
+/* Ajustes Bloque 6: explicación de concentración de distancias */
+.dimension-explainer{
+  margin-top:16px;
+  padding:16px 17px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+}
+.dimension-explainer-title{
+  margin:0 0 7px !important;
+  font-weight:850;
+  color:var(--text) !important;
+}
+.dimension-explainer p{
+  margin:.45em 0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.dimension-explainer .metric-formula{
+  margin:10px 0;
+  font-size:.98rem;
+  white-space:normal;
+}
