@@ -1333,12 +1333,12 @@ function renderDominatedTrap(){
     TRAP_STATE.dominated ? vals.hv1.toFixed(4) : "—";
 
   document.querySelector("#dominated-toggle").textContent=
-    TRAP_STATE.dominated?"Quitar punto dominado":"Añadir punto dominado";
+    TRAP_STATE.dominated?"Excluir solución dominada":"Incluir solución dominada en el conjunto evaluado";
 
   document.querySelector("#dominated-message").textContent=
     TRAP_STATE.dominated
-      ? "IGD mejora aunque añadimos una solución dominada; IGD+ y HV permanecen iguales."
-      : "Añade el punto gris y observa qué indicador cambia.";
+      ? "IGD mejora aunque incluimos una solución dominada en el conjunto evaluado; IGD+ y HV permanecen iguales."
+      : "Incluye deliberadamente la solución gris y observa qué indicador cambia.";
 }
 const domBtn=document.querySelector("#dominated-toggle");
 if(domBtn) domBtn.addEventListener("click",()=>{
@@ -1398,3 +1398,56 @@ renderScaleTrap();
 renderRefsetTrap();
 renderDominatedTrap();
 renderDimensionTrap();
+
+
+// ---------- Bloque 7: Mini laboratorio ----------
+const LAB_BUDGETS={
+  "1200":{
+    nsga:{hv:0.13822,igd:0.57890,eps:0.68200},
+    sms:{hv:0.16098,igd:0.53583,eps:0.58370},
+    title:"SMS-EMOA es favorecido por las tres métricas",
+    message:"En esta etapa intermedia, SMS-EMOA tiene mayor HV y menores IGD+ y ε+."
+  },
+  "2000":{
+    nsga:{hv:0.41003,igd:0.30616,eps:0.44141},
+    sms:{hv:0.35306,igd:0.36294,eps:0.41084},
+    title:"La conclusión se divide",
+    message:"NSGA-II es favorecido por HV e IGD+, mientras ε+ sigue favoreciendo a SMS-EMOA."
+  }
+};
+
+function renderLabBudget(budget){
+  const d=LAB_BUDGETS[budget];
+
+  document.querySelector("#budget-nsga-hv").textContent=d.nsga.hv.toFixed(5);
+  document.querySelector("#budget-nsga-igd").textContent=d.nsga.igd.toFixed(5);
+  document.querySelector("#budget-nsga-eps").textContent=d.nsga.eps.toFixed(5);
+
+  document.querySelector("#budget-sms-hv").textContent=d.sms.hv.toFixed(5);
+  document.querySelector("#budget-sms-igd").textContent=d.sms.igd.toFixed(5);
+  document.querySelector("#budget-sms-eps").textContent=d.sms.eps.toFixed(5);
+
+  document.querySelector("#budget-label").textContent=`${budget} evaluaciones`;
+  document.querySelector("#budget-title").textContent=d.title;
+  document.querySelector("#budget-message").textContent=d.message;
+
+  const nsga=document.querySelector("#budget-row-nsga");
+  const sms=document.querySelector("#budget-row-sms");
+  nsga.classList.remove("winner");
+  sms.classList.remove("winner");
+
+  if(budget==="1200"){
+    sms.classList.add("winner");
+  }else{
+    // There is no unique winner at 2000; leave both unhighlighted.
+  }
+
+  document.querySelectorAll(".budget-btn").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.budget===budget);
+  });
+}
+
+document.querySelectorAll(".budget-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>renderLabBudget(btn.dataset.budget));
+});
+renderLabBudget("1200");

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
   <header class="site-header">
@@ -795,13 +795,13 @@
             <div class="trap-head">
               <span class="trap-number">03</span>
               <div>
-                <h3>Un punto dominado puede “mejorar” IGD</h3>
-                <p>Un resultado contraintuitivo que ayuda a entender por qué apareció IGD+.</p>
+                <h3>¿Qué pasa si evaluamos sin filtrar soluciones dominadas?</h3>
+                <p>Una approximation front debería contener sólo soluciones no dominadas. Aquí incluimos deliberadamente una solución dominada para probar la sensibilidad del indicador.</p>
               </div>
             </div>
 
             <button id="dominated-toggle" class="button secondary trap-action">
-              Añadir punto dominado
+              Incluir solución dominada en el conjunto evaluado
             </button>
 
             <div id="dominated-plot" class="trap-plot"></div>
@@ -822,7 +822,7 @@
             </div>
 
             <p id="dominated-message" class="trap-message">
-              Añade el punto gris y observa qué indicador cambia.
+              Incluye deliberadamente la solución gris y observa qué indicador cambia.
             </p>
           </article>
 
@@ -903,10 +903,149 @@
     </section>
 
     <section id="laboratorio" class="section">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 7</p>
-        <h2>Mini laboratorio</h2>
-        <p>Próximamente: notebook de Google Colab con pymoo.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 7 · Mini laboratorio</p>
+        <h2>De la intuición a una corrida real</h2>
+        <p class="section-intro">
+          Ahora usamos un problema real de benchmark y dos algoritmos multiobjetivo.
+          La pregunta ya no es sólo “¿quién gana?”, sino <strong>cuándo</strong> y
+          <strong>según qué indicador</strong>.
+        </p>
+
+        <div class="lab-hero">
+          <div>
+            <p class="lab-eyebrow">Experimento en vivo</p>
+            <h3>NSGA-II vs. SMS-EMOA sobre ZDT1</h3>
+            <p>
+              Mismo problema, misma semilla y mismo presupuesto de evaluaciones.
+              La ejecución es breve: puedes seguirla en tu computadora o simplemente
+              participar haciendo predicciones e interpretando los resultados.
+            </p>
+            <div class="lab-actions">
+              <a class="button primary" target="_blank" rel="noopener"
+                 href="https://colab.research.google.com/github/MargaritaReyess/ece2026/blob/main/docs/notebooks/ECE2026_minilab_metricas_multiobjetivo_v2.ipynb">
+                Abrir mini laboratorio en Colab
+              </a>
+              <a class="button secondary"
+                 href="notebooks/ECE2026_minilab_metricas_multiobjetivo_v2.ipynb">
+                Descargar notebook
+              </a>
+            </div>
+          </div>
+
+          <div class="lab-config">
+            <div><span>Problema</span><strong>ZDT1</strong></div>
+            <div><span>Población</span><strong>50</strong></div>
+            <div><span>Semilla</span><strong>7</strong></div>
+            <div><span>Presupuesto final</span><strong>2000 eval.</strong></div>
+          </div>
+        </div>
+
+        <div class="lab-prediction">
+          <p class="section-kicker">Antes de ejecutar</p>
+          <h3>Haz una predicción</h3>
+          <div class="prediction-grid">
+            <div>¿Quién tendrá mayor <strong>HV</strong>?</div>
+            <div>¿Quién tendrá menor <strong>IGD+</strong>?</div>
+            <div>¿Las métricas contarán la misma historia?</div>
+          </div>
+        </div>
+
+        <div class="budget-story">
+          <div class="budget-story-head">
+            <div>
+              <p class="section-kicker">La misma corrida, dos momentos</p>
+              <h3>¿Qué ocurre si detenemos antes la búsqueda?</h3>
+            </div>
+            <div class="segmented budget-toggle" role="group" aria-label="Seleccionar presupuesto">
+              <button class="budget-btn active" data-budget="1200">1200 eval.</button>
+              <button class="budget-btn" data-budget="2000">2000 eval.</button>
+            </div>
+          </div>
+
+          <div class="budget-content">
+            <div class="budget-table">
+              <div class="budget-row budget-header">
+                <span>Algoritmo</span>
+                <span>HV ↑</span>
+                <span>IGD+ ↓</span>
+                <span>ε+ ↓</span>
+              </div>
+              <div class="budget-row" id="budget-row-nsga">
+                <strong>NSGA-II</strong>
+                <span id="budget-nsga-hv">0.13822</span>
+                <span id="budget-nsga-igd">0.57890</span>
+                <span id="budget-nsga-eps">0.68200</span>
+              </div>
+              <div class="budget-row" id="budget-row-sms">
+                <strong>SMS-EMOA</strong>
+                <span id="budget-sms-hv">0.16098</span>
+                <span id="budget-sms-igd">0.53583</span>
+                <span id="budget-sms-eps">0.58370</span>
+              </div>
+            </div>
+
+            <aside class="budget-verdict">
+              <span id="budget-label">1200 evaluaciones</span>
+              <strong id="budget-title">SMS-EMOA es favorecido por las tres métricas</strong>
+              <p id="budget-message">
+                En esta etapa intermedia, SMS-EMOA tiene mayor HV y menores IGD+ y ε+.
+              </p>
+            </aside>
+          </div>
+        </div>
+
+        <div class="lab-surprises">
+          <article>
+            <span class="insight-symbol">1</span>
+            <div>
+              <h3>El presupuesto importa</h3>
+              <p>
+                A 1200 evaluaciones SMS-EMOA es favorecido por las tres métricas.
+                A 2000, NSGA-II lo supera en HV e IGD+.
+              </p>
+            </div>
+          </article>
+          <article>
+            <span class="insight-symbol">2</span>
+            <div>
+              <h3>El indicador importa</h3>
+              <p>
+                Al final, ε+ sigue favoreciendo a SMS-EMOA aunque HV e IGD+ favorecen a NSGA-II.
+              </p>
+            </div>
+          </article>
+          <article>
+            <span class="insight-symbol">3</span>
+            <div>
+              <h3>Una corrida no basta</h3>
+              <p>
+                Este resultado sirve para aprender, no para afirmar que un algoritmo es superior en general.
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="lab-flow">
+          <p class="section-kicker">Durante la ejecución</p>
+          <div class="lab-flow-grid">
+            <div><strong>1</strong><span>Miramos los frentes antes que las métricas.</span></div>
+            <div><strong>2</strong><span>Observamos cómo evoluciona HV.</span></div>
+            <div><strong>3</strong><span>Observamos cómo evoluciona IGD+.</span></div>
+            <div><strong>4</strong><span>Revelamos la tabla y discutimos las discrepancias.</span></div>
+          </div>
+        </div>
+
+        <div class="quality-summary">
+          <p class="transition-small">Idea clave</p>
+          <p class="transition-big">
+            La conclusión puede cambiar con el indicador y también con el momento en que detenemos la búsqueda.
+          </p>
+          <p>
+            El notebook queda disponible para repetir el experimento con otra semilla, otro presupuesto
+            o una configuración distinta.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -925,6 +1064,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
