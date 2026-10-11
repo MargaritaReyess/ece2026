@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=11" />
+  <link rel="stylesheet" href="styles.css?v=12" />
 </head>
 <body>
   <header class="site-header">
@@ -52,6 +52,13 @@
           <div class="hero-actions">
             <a class="button primary" href="#reto">Comenzar el taller</a>
             <span class="pill">75 min · visual · práctico</span>
+          </div>
+          <div class="hero-material-card">
+            <img src="assets/qr_taller.png" alt="Código QR para abrir el material del taller">
+            <div>
+              <strong>Material del taller</strong>
+              <span>Escanéalo y guárdalo para consultar después.</span>
+            </div>
           </div>
         </div>
 
@@ -1050,10 +1057,171 @@
     </section>
 
     <section id="guia" class="section muted">
-      <div class="container placeholder">
-        <p class="section-kicker">Bloque 8</p>
-        <h2>Guía práctica</h2>
-        <p>Próximamente: cómo elegir y reportar indicadores.</p>
+      <div class="container">
+        <p class="section-kicker">Bloque 8 · Guía práctica y cierre</p>
+        <h2>Entonces, ¿qué métrica uso?</h2>
+        <p class="section-intro">
+          No existe una respuesta universal. Empieza por la pregunta que quieres contestar,
+          no por el indicador que tienes más a la mano.
+        </p>
+
+        <div class="decision-grid">
+          <article>
+            <span class="decision-icon">R</span>
+            <h3>¿Tengo una buena referencia del PF?</h3>
+            <p class="decision-pick">Considera <strong>IGD+</strong></p>
+            <p>Útil para evaluar convergencia y cobertura respecto a un reference set.</p>
+            <small>Cuida cómo construyes y distribuyes la referencia.</small>
+          </article>
+
+          <article>
+            <span class="decision-icon">HV</span>
+            <h3>¿No quiero depender del PF verdadero?</h3>
+            <p class="decision-pick">Considera <strong>Hypervolume</strong></p>
+            <p>Resume región dominada y combina información de convergencia y extensión.</p>
+            <small>Documenta el reference point y vigila el costo en muchos objetivos.</small>
+          </article>
+
+          <article>
+            <span class="decision-icon">ε</span>
+            <h3>¿Me preocupa especialmente el peor caso?</h3>
+            <p class="decision-pick">Considera <strong>ε+</strong></p>
+            <p>Se concentra en el peor desplazamiento necesario para cubrir la referencia.</p>
+            <small>No sustituye una lectura global del conjunto.</small>
+          </article>
+
+          <article>
+            <span class="decision-icon">R2</span>
+            <h3>¿Quiero incorporar preferencias?</h3>
+            <p class="decision-pick">Considera <strong>R2</strong></p>
+            <p>Resume los mejores compromisos bajo múltiples pesos y funciones de escalarización.</p>
+            <small>Explicita pesos, función usada y orientación de la utilidad.</small>
+          </article>
+        </div>
+
+        <div class="guide-note">
+          <strong>No es una receta.</strong>
+          <span>
+            Dos indicadores razonables pueden responder preguntas diferentes. Justifica siempre
+            qué aspecto de calidad quieres medir.
+          </span>
+        </div>
+
+        <div class="publication-checklist">
+          <p class="section-kicker">Antes de publicar resultados</p>
+          <h3>Checklist de evaluación</h3>
+          <div class="publication-checks">
+            <label><input type="checkbox"> Revisé escalas y normalización.</label>
+            <label><input type="checkbox"> Todos los algoritmos usan la misma referencia.</label>
+            <label><input type="checkbox"> Sé si evalúo sólo soluciones no dominadas o el conjunto bruto.</label>
+            <label><input type="checkbox"> Documenté reference set y/o reference point.</label>
+            <label><input type="checkbox"> Revisé cardinalidad y cobertura del conjunto.</label>
+            <label><input type="checkbox"> Miré también los approximation fronts.</label>
+            <label><input type="checkbox"> Usé múltiples corridas cuando la comparación es formal.</label>
+            <label><input type="checkbox"> Verifiqué si la conclusión sobrevive a otra métrica razonable.</label>
+          </div>
+        </div>
+
+        <div class="final-question">
+          <p class="section-kicker">Volvamos al minuto 1</p>
+          <h3>¿Cuál algoritmo produjo el mejor resultado?</h3>
+
+          <div class="final-plots">
+            <article>
+              <div class="plot-title-row"><h4>Algoritmo A</h4></div>
+              <div id="final-plot-a" class="plot"></div>
+            </article>
+            <article>
+              <div class="plot-title-row"><h4>Algoritmo B</h4></div>
+              <div id="final-plot-b" class="plot"></div>
+            </article>
+          </div>
+
+          <div class="final-choice-buttons">
+            <button class="final-choice" data-choice="A">A</button>
+            <button class="final-choice" data-choice="B">B</button>
+            <button class="final-choice emphasis" data-choice="info">Necesito más información</button>
+          </div>
+
+          <p id="final-choice-message" class="final-choice-message">
+            La pregunta es la misma. Tú ya no eres el mismo evaluador.
+          </p>
+
+          <div id="final-questions" class="final-questions hidden">
+            <span>¿Qué entendemos por calidad?</span>
+            <span>¿Qué indicador?</span>
+            <span>¿Qué referencia?</span>
+            <span>¿Qué escalas?</span>
+            <span>¿Qué presupuesto?</span>
+            <span>¿Cuántas corridas?</span>
+          </div>
+        </div>
+
+        <div class="next-lines">
+          <p class="section-kicker">Para seguir explorando</p>
+          <h3>La evaluación multiobjetivo sigue abierta</h3>
+          <div class="next-grid">
+            <article><strong>Indicadores con preferencias</strong><span>Incorporar qué regiones o compromisos importan más.</span></article>
+            <article><strong>Combinación de indicadores</strong><span>Evitar depender de una única noción de calidad.</span></article>
+            <article><strong>Indicadores aprendidos</strong><span>Aprender funciones de evaluación a partir de datos o preferencias.</span></article>
+            <article><strong>Evaluación multi-indicador</strong><span>Analizar robustez de conclusiones frente a varias perspectivas.</span></article>
+          </div>
+        </div>
+
+        <div class="final-resources">
+          <div class="resource-card">
+            <img src="assets/qr_taller.png" alt="QR del material completo del taller">
+            <div>
+              <h3>Material del taller</h3>
+              <p>Explicaciones, demos interactivos, guía práctica y referencias.</p>
+              <a class="button secondary" href="https://margaritareyess.github.io/ece2026/" target="_blank" rel="noopener">Abrir página</a>
+            </div>
+          </div>
+
+          <div class="resource-card">
+            <img src="assets/qr_colab.png" alt="QR del mini laboratorio en Google Colab">
+            <div>
+              <h3>Mini laboratorio</h3>
+              <p>NSGA-II vs. SMS-EMOA sobre ZDT1 con HV, IGD+ y ε+.</p>
+              <a class="button primary" href="https://colab.research.google.com/github/MargaritaReyess/ece2026/blob/main/docs/notebooks/ECE2026_minilab_metricas_multiobjetivo_v2.ipynb" target="_blank" rel="noopener">Abrir Colab</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="closing-statement">
+          <p>Evaluar un algoritmo multiobjetivo no consiste en calcular una métrica.</p>
+          <strong>Consiste en justificar qué significa “mejor”.</strong>
+        </div>
+
+        <div class="references-block">
+          <p class="section-kicker">Referencias clave</p>
+          <ol>
+            <li>
+              Li, M., &amp; Yao, X. (2019). <em>Quality Evaluation of Solution Sets in Multiobjective Optimisation: A Survey</em>.
+              ACM Computing Surveys, 52(2), Article 26. DOI: 10.1145/3300148.
+            </li>
+            <li>
+              Ishibuchi, H., Masuda, H., Tanigaki, Y., &amp; Nojima, Y. (2015).
+              <em>Modified Distance Calculation in Generational Distance and Inverted Generational Distance</em>.
+              EMO 2015, LNCS 9019, 110–125. DOI: 10.1007/978-3-319-15892-1_8.
+            </li>
+            <li>
+              Guerreiro, A. P., Fonseca, C. M., &amp; Paquete, L. (2020).
+              <em>The Hypervolume Indicator: Problems and Algorithms</em>. arXiv:2005.00515.
+            </li>
+            <li>
+              Deb, K., Pratap, A., Agarwal, S., &amp; Meyarivan, T. (2002).
+              <em>A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II</em>.
+              IEEE Transactions on Evolutionary Computation, 6(2), 182–197.
+            </li>
+            <li>
+              Beume, N., Naujoks, B., &amp; Emmerich, M. (2007).
+              <em>SMS-EMOA: Multiobjective selection based on dominated hypervolume</em>.
+              European Journal of Operational Research, 181(3), 1653–1669.
+              DOI: 10.1016/j.ejor.2006.08.008.
+            </li>
+          </ol>
+        </div>
       </div>
     </section>
   </main>
@@ -1064,6 +1232,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>

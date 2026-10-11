@@ -1451,3 +1451,28 @@ document.querySelectorAll(".budget-btn").forEach(btn=>{
   btn.addEventListener("click",()=>renderLabBudget(btn.dataset.budget));
 });
 renderLabBudget("1200");
+
+
+// ---------- Bloque 8: cierre ----------
+(function renderFinalPlots(){
+  const a=document.querySelector("#final-plot-a");
+  const b=document.querySelector("#final-plot-b");
+  if(a && !a.hasChildNodes()) a.appendChild(makeSvg("A"));
+  if(b && !b.hasChildNodes()) b.appendChild(makeSvg("B"));
+})();
+
+document.querySelectorAll(".final-choice").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const choice=btn.dataset.choice;
+    const message=document.querySelector("#final-choice-message");
+    const questions=document.querySelector("#final-questions");
+
+    if(choice==="info"){
+      message.textContent="Exacto: antes de decidir, necesitamos definir cómo estamos evaluando.";
+      questions.classList.remove("hidden");
+    }else{
+      message.textContent=`${choice} puede ser una respuesta razonable bajo cierta definición de calidad. ¿Qué información falta para justificarla?`;
+      questions.classList.remove("hidden");
+    }
+  });
+});
