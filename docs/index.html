@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Taller ECE 2026: Métricas para evaluar algoritmos multiobjetivo" />
   <title>ECE 2026 · Métricas multiobjetivo · Dra. María Margarita Reyes Sierra</title>
-  <link rel="stylesheet" href="styles.css?v=12" />
+  <link rel="stylesheet" href="styles.css?v=13" />
 </head>
 <body>
   <header class="site-header">
@@ -933,7 +933,10 @@
                  href="https://colab.research.google.com/github/MargaritaReyess/ece2026/blob/main/docs/notebooks/ECE2026_minilab_metricas_multiobjetivo_v2.ipynb">
                 Abrir mini laboratorio en Colab
               </a>
-              
+              <a class="button secondary"
+                 href="notebooks/ECE2026_minilab_metricas_multiobjetivo_v2.ipynb">
+                Descargar notebook
+              </a>
             </div>
           </div>
 
@@ -1160,8 +1163,55 @@
           <div class="next-grid">
             <article><strong>Indicadores con preferencias</strong><span>Incorporar qué regiones o compromisos importan más.</span></article>
             <article><strong>Combinación de indicadores</strong><span>Evitar depender de una única noción de calidad.</span></article>
-            <article><strong>Indicadores aprendidos</strong><span>Aprender funciones de evaluación a partir de datos o preferencias.</span></article>
+            <article><strong>Indicadores binarios y M-arios</strong><span>Comparar directamente dos o más approximation sets.</span></article>
             <article><strong>Evaluación multi-indicador</strong><span>Analizar robustez de conclusiones frente a varias perspectivas.</span></article>
+          </div>
+
+          <div class="binary-spotlight">
+            <div>
+              <p class="section-kicker">Unario vs. binario</p>
+              <h3>Un ejemplo de indicador binario: Set Coverage</h3>
+              <p>
+                Hasta aquí usamos sobre todo <strong>indicadores unarios</strong>, es decir, funciones que asignan un valor a una sola aproximación:
+                <span class="inline-eq">I(A)</span>. También existen indicadores <strong>binarios</strong> y, en general, <strong>M-arios</strong>,
+                que comparan directamente dos o más conjuntos: <span class="inline-eq">I(A,B)</span> o <span class="inline-eq">I(A<sub>1</sub>,\dots,A<sub>M</sub>)</span>.
+              </p>
+              <p>
+                Un ejemplo clásico es <strong>Set Coverage</strong>, también conocido como <strong>C-indicator</strong>. En minimización,
+                <span class="inline-eq">C(A,B)</span> es la fracción de puntos de <span class="inline-eq">B</span> que están dominados por al menos un punto de <span class="inline-eq">A</span>.
+              </p>
+              <div class="binary-tags">
+                <span class="tag">Binario</span>
+                <span class="tag">Asimétrico</span>
+                <span class="tag">0 ≤ C(A,B) ≤ 1</span>
+              </div>
+              <div class="binary-math-card">
+                <div class="binary-math">C(A,B) = |{ b ∈ B : ∃ a ∈ A, a ≼ b }| / |B|</div>
+                <p>
+                  No necesariamente se cumple <span class="inline-eq">C(A,B)=C(B,A)</span>. En el ejemplo de la derecha,
+                  <strong>A cubre 2 de 4 puntos de B</strong>, mientras que <strong>B cubre 1 de 4 puntos de A</strong>.
+                </p>
+              </div>
+              <p class="caption">
+                Existen otros indicadores binarios o M-arios —por ejemplo, variantes binarias de <span class="inline-eq">ε</span> y otros comparadores directos entre conjuntos—,
+                pero aquí nos quedamos con un ejemplo sencillo para distinguir la idea general.
+              </p>
+            </div>
+
+            <div class="plot-card binary-plot-card">
+              <div class="plot-title-row">
+                <strong>Set Coverage (C-indicator)</strong>
+                <span class="tag">minimización</span>
+              </div>
+              <div id="set-coverage-plot" class="plot binary-plot"></div>
+              <div class="binary-results">
+                <div><strong>C(A,B)</strong><span>2 / 4 = 0.50</span></div>
+                <div><strong>C(B,A)</strong><span>1 / 4 = 0.25</span></div>
+              </div>
+              <p class="caption">
+                Los puntos resaltados muestran cuáles elementos de un conjunto son dominados por el otro.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -1198,9 +1248,31 @@
               ACM Computing Surveys, 52(2), Article 26. DOI: 10.1145/3300148.
             </li>
             <li>
+              Audet, C., Bigeon, J., Cartier, D., Le Digabel, S., &amp; Salomon, L. (2021).
+              <em>Performance indicators in multiobjective optimization</em>.
+              European Journal of Operational Research, 292(2), 397–422.
+              DOI: 10.1016/j.ejor.2020.11.016.
+            </li>
+            <li>
               Ishibuchi, H., Masuda, H., Tanigaki, Y., &amp; Nojima, Y. (2015).
               <em>Modified Distance Calculation in Generational Distance and Inverted Generational Distance</em>.
               EMO 2015, LNCS 9019, 110–125. DOI: 10.1007/978-3-319-15892-1_8.
+            </li>
+            <li>
+              Falcón-Cardona, J. G., &amp; Coello Coello, C. A. (2020).
+              <em>Indicator-based Multi-objective Evolutionary Algorithms: A Comprehensive Survey</em>.
+              ACM Computing Surveys, 53(2), 1–35. DOI: 10.1145/3376916.
+            </li>
+            <li>
+              Afsar, B., Fieldsend, J. E., Guerreiro, A. P., Miettinen, K., Rojas Gonzalez, S., &amp; Sato, H. (2023).
+              <em>Many-Objective Quality Measures</em>. In D. Brockhoff, M. Emmerich, B. Naujoks, &amp; R. Purshouse (Eds.),
+              <em>Many-Criteria Optimization and Decision Analysis: State-of-the-Art, Present Challenges, and Future Perspectives</em>
+              (pp. 113–148). Springer. DOI: 10.1007/978-3-031-25263-1_5.
+            </li>
+            <li>
+              Ehrgott, M., Köksalan, M., Kadziński, M., &amp; Deb, K. (2026).
+              <em>Fifty years of multi-objective optimization and decision-making: From mathematical programming to evolutionary computation</em>.
+              European Journal of Operational Research, 330(1), 1–25. DOI: 10.1016/j.ejor.2025.06.012.
             </li>
             <li>
               Guerreiro, A. P., Fonseca, C. M., &amp; Paquete, L. (2020).
@@ -1217,39 +1289,6 @@
               European Journal of Operational Research, 181(3), 1653–1669.
               DOI: 10.1016/j.ejor.2006.08.008.
             </li>
-
-            <li>
-  Audet, C., Bigeon, J., Cartier, D., Le Digabel, S., &amp; Salomon, L. (2021).
-  <em>Performance indicators in multiobjective optimization</em>.
-  European Journal of Operational Research, 292(2), 397–422.
-  DOI: 10.1016/j.ejor.2020.11.016.
-</li>
-
-<li>
-  Falcón-Cardona, J. G., &amp; Coello Coello, C. A. (2020).
-  <em>Indicator-based Multi-objective Evolutionary Algorithms: A Comprehensive Survey</em>.
-  ACM Computing Surveys, 53(2), 1–35.
-  DOI: 10.1145/3376916.
-</li>
-
-<li>
-  Afsar, B., Fieldsend, J. E., Guerreiro, A. P., Miettinen, K.,
-  Rojas Gonzalez, S., &amp; Sato, H. (2023).
-  <em>Many-Objective Quality Measures</em>.
-  In D. Brockhoff, M. Emmerich, B. Naujoks, &amp; R. Purshouse (Eds.),
-  <em>Many-Criteria Optimization and Decision Analysis:
-  State-of-the-Art, Present Challenges, and Future Perspectives</em>
-  (pp. 113–148). Springer.
-  DOI: 10.1007/978-3-031-25263-1_5.
-</li>
-
-<li>
-  Ehrgott, M., Köksalan, M., Kadziński, M., &amp; Deb, K. (2026).
-  <em>Fifty years of multi-objective optimization and decision-making:
-  From mathematical programming to evolutionary computation</em>.
-  European Journal of Operational Research, 330(1), 1–25.
-  DOI: 10.1016/j.ejor.2025.06.012.
-</li>
           </ol>
         </div>
       </div>
@@ -1262,6 +1301,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
 </body>
 </html>

@@ -1476,3 +1476,102 @@ document.querySelectorAll(".final-choice").forEach(btn=>{
     }
   });
 });
+
+
+// ---------- Bloque 8 extra: indicadores binarios / Set Coverage ----------
+(function renderSetCoverage(){
+  const container=document.querySelector('#set-coverage-plot');
+  if(!container || container.hasChildNodes()) return;
+
+  const width=560, height=360, pad=48;
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+  const {sx,sy}=scaleFactory(width,height,pad);
+
+  const A=[[0.20,0.70],[0.40,0.48],[0.60,0.32],[0.82,0.18]];
+  const B=[[0.24,0.78],[0.45,0.55],[0.10,0.95],[0.74,0.14]];
+  const dominatedB=[0,1];
+  const dominatedA=[3];
+
+  [0,.25,.5,.75,1].forEach(t=>{
+    const v=document.createElementNS(NS,'line');
+    v.setAttribute('x1',sx(t)); v.setAttribute('x2',sx(t));
+    v.setAttribute('y1',sy(0)); v.setAttribute('y2',sy(1));
+    v.setAttribute('class','grid'); svg.appendChild(v);
+    const h=document.createElementNS(NS,'line');
+    h.setAttribute('x1',sx(0)); h.setAttribute('x2',sx(1));
+    h.setAttribute('y1',sy(t)); h.setAttribute('y2',sy(t));
+    h.setAttribute('class','grid'); svg.appendChild(h);
+  });
+
+  const ax=document.createElementNS(NS,'line');
+  ax.setAttribute('x1',sx(0)); ax.setAttribute('x2',sx(1));
+  ax.setAttribute('y1',sy(0)); ax.setAttribute('y2',sy(0));
+  ax.setAttribute('class','axis'); svg.appendChild(ax);
+  const ay=document.createElementNS(NS,'line');
+  ay.setAttribute('x1',sx(0)); ay.setAttribute('x2',sx(0));
+  ay.setAttribute('y1',sy(0)); ay.setAttribute('y2',sy(1));
+  ay.setAttribute('class','axis'); svg.appendChild(ay);
+
+  // Halos: B dominated by A
+  dominatedB.forEach(i=>{
+    const [x,y]=B[i];
+    const halo=document.createElementNS(NS,'circle');
+    halo.setAttribute('cx',sx(x)); halo.setAttribute('cy',sy(y));
+    halo.setAttribute('r',16); halo.setAttribute('class','halo-a');
+    svg.appendChild(halo);
+  });
+  // Halo: A dominated by B
+  dominatedA.forEach(i=>{
+    const [x,y]=A[i];
+    const halo=document.createElementNS(NS,'circle');
+    halo.setAttribute('cx',sx(x)); halo.setAttribute('cy',sy(y));
+    halo.setAttribute('r',16); halo.setAttribute('class','halo-b');
+    svg.appendChild(halo);
+  });
+
+  A.forEach(([x,y],i)=>{
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',sx(x)); c.setAttribute('cy',sy(y));
+    c.setAttribute('r',7); c.setAttribute('class','set-a');
+    svg.appendChild(c);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',sx(x)+8); t.setAttribute('y',sy(y)-8); t.setAttribute('class','ann');
+    t.textContent=`A${i+1}`; svg.appendChild(t);
+  });
+  B.forEach(([x,y],i)=>{
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',sx(x)); c.setAttribute('cy',sy(y));
+    c.setAttribute('r',7); c.setAttribute('class','set-b');
+    svg.appendChild(c);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',sx(x)+8); t.setAttribute('y',sy(y)-8); t.setAttribute('class','ann');
+    t.textContent=`B${i+1}`; svg.appendChild(t);
+  });
+
+  const tx=document.createElementNS(NS,'text');
+  tx.setAttribute('x',width-30); tx.setAttribute('y',height-18); tx.setAttribute('class','label');
+  tx.textContent='f₁'; svg.appendChild(tx);
+  const ty=document.createElementNS(NS,'text');
+  ty.setAttribute('x',16); ty.setAttribute('y',30); ty.setAttribute('class','label');
+  ty.textContent='f₂'; svg.appendChild(ty);
+
+  const legendY=22;
+  [[pad, 'set-a', 'A'], [pad+70, 'set-b', 'B']].forEach(([x, cls, label])=>{
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',legendY); c.setAttribute('r',6); c.setAttribute('class',cls);
+    svg.appendChild(c);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',x+12); t.setAttribute('y',legendY+5); t.setAttribute('class','legend-text');
+    t.textContent=`conjunto ${label}`; svg.appendChild(t);
+  });
+
+  const note1=document.createElementNS(NS,'text');
+  note1.setAttribute('x',sx(0.53)); note1.setAttribute('y',sy(0.92)); note1.setAttribute('class','ann');
+  note1.textContent='Halo azul: puntos de B cubiertos por A'; svg.appendChild(note1);
+  const note2=document.createElementNS(NS,'text');
+  note2.setAttribute('x',sx(0.53)); note2.setAttribute('y',sy(0.86)); note2.setAttribute('class','ann');
+  note2.textContent='Halo naranja: puntos de A cubiertos por B'; svg.appendChild(note2);
+
+  container.appendChild(svg);
+})();
