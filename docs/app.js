@@ -1556,13 +1556,13 @@ document.querySelectorAll(".final-choice").forEach(btn=>{
   ty.setAttribute('x',16); ty.setAttribute('y',30); ty.setAttribute('class','label');
   ty.textContent='f₂'; svg.appendChild(ty);
 
-  const legendY=22;
-  [[pad, 'set-a', 'A'], [pad+120, 'set-b', 'B']].forEach(([x, cls, label])=>{
+  const legendItems=[[pad, 22, 'set-a', 'A'], [pad, 46, 'set-b', 'B']];
+  legendItems.forEach(([x, y, cls, label])=>{
     const c=document.createElementNS(NS,'circle');
-    c.setAttribute('cx',x); c.setAttribute('cy',legendY); c.setAttribute('r',6); c.setAttribute('class',cls);
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',6); c.setAttribute('class',cls);
     svg.appendChild(c);
     const t=document.createElementNS(NS,'text');
-    t.setAttribute('x',x+12); t.setAttribute('y',legendY+5); t.setAttribute('class','legend-text');
+    t.setAttribute('x',x+14); t.setAttribute('y',y+5); t.setAttribute('class','legend-text');
     t.textContent=`conjunto ${label}`; svg.appendChild(t);
   });
 

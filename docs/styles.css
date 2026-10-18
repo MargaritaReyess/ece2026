@@ -83,7 +83,7 @@ a{color:inherit}
 }
 
 h1{
-  font-size:clamp(2.2rem,4.7vw,4.45rem);
+  font-size:clamp(2rem,4.2vw,4.0rem);
   line-height:1.02;
   letter-spacing:-.045em;
   margin:.25em 0 .3em
@@ -129,16 +129,16 @@ h3{margin:0;font-size:1.25rem}
 
 .speaker-text p{margin:0}
 .speaker-name{
-  font-size:1.28rem;
+  font-size:1.42rem;
   font-weight:850;
   color:var(--text)
 }
 
 .speaker-affiliation{
   margin-top:2px !important;
-  font-size:1.12rem;
+  font-size:1.2rem;
   color:var(--muted);
-  font-weight:700
+  font-weight:720
 }
 
 .hero-actions{
