@@ -1557,7 +1557,7 @@ document.querySelectorAll(".final-choice").forEach(btn=>{
   ty.textContent='f₂'; svg.appendChild(ty);
 
   const legendY=22;
-  [[pad, 'set-a', 'A'], [pad+70, 'set-b', 'B']].forEach(([x, cls, label])=>{
+  [[pad, 'set-a', 'A'], [pad+120, 'set-b', 'B']].forEach(([x, cls, label])=>{
     const c=document.createElementNS(NS,'circle');
     c.setAttribute('cx',x); c.setAttribute('cy',legendY); c.setAttribute('r',6); c.setAttribute('class',cls);
     svg.appendChild(c);
